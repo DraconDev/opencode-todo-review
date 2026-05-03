@@ -13,11 +13,15 @@ Never forget what you accomplished. This OpenCode plugin auto-reviews your sessi
 
 ## Install
 
+OpenCode auto-loads TypeScript plugins from `~/.config/opencode/plugins/`. Either file works:
+
 ```bash
 cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
+# or copy the compiled version:
+cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
-Restart OpenCode to auto-load.
+Restart OpenCode to load the plugin. Debug logs (plugin load, event types, session IDs, scheduling diagnostics) appear in your terminal.
 
 ## Configuration
 
