@@ -21,7 +21,14 @@ cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
 cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
-Restart OpenCode to load the plugin. Debug logs (plugin load, event types, session IDs, scheduling diagnostics) appear in your terminal.
+Register in `opencode.json` to activate:
+```json
+"plugin": [
+  "opencode-auto-review-completed-todos"
+]
+```
+
+Restart OpenCode to load. Debug logs visible in terminal with `debug: true` config.
 
 ## Configuration
 
@@ -96,10 +103,11 @@ When a source updates, the plugin diffs its old extracted todos against its new 
 ### Todo detection
 
 **Creation patterns (case-insensitive):**
-- `- [ ] task`
-- `[ ] task` (no dash)
-- `TODO: task`
-- `todo: task`
+- `- [ ] task` (checkbox with dash)
+- `[ ] task` (checkbox without dash)
+- `TODO: task` (with colon)
+- `todo: task` (with colon)
+- `todo task` (informal — dash or colon optional)
 
 **Completion patterns (case-insensitive, fuzzy-matched):**
 - `- [x] task`
@@ -122,27 +130,31 @@ When a source updates, the plugin diffs its old extracted todos against its new 
 ## Example flow
 
 ```
-Model: "Here are the tasks:
+User:  "Here are the tasks:
         - [ ] fix auth bug
         - [ ] update docs"
+
+Plugin:
+  1. Detects two todos: "fix auth bug", "update docs"
+  2. Sets hadTodos = true
 
 User:  "done: fix auth bug"
 
 Plugin:
   1. Detects "fix auth bug" completed (fuzzy match)
-  2. Schedules review in 500ms
-  3. 500ms passes, "update docs" still active
-  4. Review NOT triggered
+  2. "update docs" still active → review NOT triggered
 
 User:  "all done"
 
 Plugin:
   1. Detects bulk completion phrase
-  2. Clears all todos
+  2. Clears all todos (both were tracked)
   3. Schedules review in 500ms
-  4. No new todos appear
+  4. No new todos appear in 500ms window
   5. Triggers review prompt → AI summarizes session
 ```
+
+**Review triggers when:** all tracked todos become empty (no new todos in 500ms debounce window). Can happen via individual completion, bulk phrase, or a mix.
 
 ## Requirements
 

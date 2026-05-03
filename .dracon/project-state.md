@@ -1,22 +1,24 @@
 # Project State
 
 ## Current Focus
-Added debug logging and clarified message text-based todo detection for the auto-review plugin
+Improved documentation for the auto-review plugin's todo handling behavior and configuration.
 
 ## Context
-The plugin now needs better visibility into its operation and clearer documentation about its message text-based todo detection, as it doesn't hook into OpenCode's internal todo system.
+The plugin now supports more flexible todo detection patterns and clearer configuration instructions. The documentation updates reflect these changes to ensure users understand the new capabilities and requirements.
 
 ## Completed
-- [x] Added `debug` option to enable verbose console logging
-- [x] Updated documentation to specify message text-based todo detection
-- [x] Clarified that checkbox UI completions won't trigger review
+- [x] Added explicit plugin registration instructions in `opencode.json`
+- [x] Clarified debug logging configuration requirements
+- [x] Expanded todo detection patterns with more examples
+- [x] Improved example flow to show review trigger conditions
+- [x] Added explicit review trigger rules documentation
 
 ## In Progress
-- [x] Documentation updates for debug logging and message text requirements
+- [ ] No active work in progress
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Test debug logging in various scenarios
-2. Verify message text-based todo detection works as documented
+1. Verify plugin behavior matches updated documentation
+2. Test edge cases in todo detection patterns
