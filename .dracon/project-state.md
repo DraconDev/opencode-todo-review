@@ -1,21 +1,24 @@
 # Project State
 
 ## Current Focus
-Added documentation for an auto-review plugin that triggers when all todos are completed
+Improved documentation for the auto-review plugin that triggers when all session todos are completed.
 
 ## Context
-This change documents a new OpenCode plugin that automatically initiates a final review when all tracked todos are completed, improving workflow efficiency by ensuring comprehensive session summaries.
+The plugin now automatically summarizes accomplishments, technical decisions, and follow-ups when all todos are done. This change updates the documentation to reflect the new behavior and configuration options.
 
 ## Completed
-- [x] Created README with plugin description, features, configuration options, and installation instructions
-- [x] Documented fuzzy matching threshold and debounce timing parameters
+- [x] Added installation instructions
+- [x] Documented configuration options with types and descriptions
+- [x] Added a "How it works" flow diagram
+- [x] Clarified requirements
+- [x] Improved the description of what the plugin does
 
 ## In Progress
-- [x] Documentation for the auto-review plugin
+- [x] Documentation updates are complete
 
 ## Blockers
-- None identified for this documentation update
+- None
 
 ## Next Steps
-1. Implement the plugin functionality based on documented requirements
-2. Test plugin integration with OpenCode core system
+1. Test the plugin with various todo completion scenarios
+2. Gather user feedback on the review summaries
