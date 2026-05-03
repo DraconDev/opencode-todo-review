@@ -25,7 +25,7 @@ Restart OpenCode to load the plugin. Debug logs (plugin load, event types, sessi
 
 ## Configuration
 
-Add to your `~/.config/opencode/opencode.json` (or project-level `opencode.json`):
+The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit entry in `opencode.json`. However, you can override defaults in your config:
 
 ```json
 {
@@ -144,3 +144,12 @@ Plugin:
 
 - OpenCode with TypeScript plugin support
 - No additional npm dependencies
+
+## Test flow
+
+To verify the plugin works:
+
+1. Start a new OpenCode session (plugins load at startup)
+2. Create todos: `Here are my tasks: - [ ] fix bug - [ ] update docs`
+3. Complete them: `done: fix bug` then `all done`
+4. Watch for the review prompt when all todos complete

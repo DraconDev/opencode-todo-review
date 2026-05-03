@@ -1,21 +1,22 @@
 # Project State
 
 ## Current Focus
-Improved plugin installation documentation for the auto-review feature.
+Improved plugin documentation and added test flow instructions for the auto-review feature.
 
 ## Context
-The auto-review plugin now supports both TypeScript and JavaScript versions, and users needed clearer installation instructions.
+The auto-review plugin now auto-loads from the plugins directory, eliminating the need for manual configuration entries. This change simplifies setup while maintaining flexibility for customization.
 
 ## Completed
-- [x] Added instructions for copying both `.ts` and `.js` plugin files
-- [x] Clarified plugin loading behavior and debug logging
+- [x] Updated plugin installation documentation to reflect auto-loading behavior
+- [x] Added test flow instructions for verifying the auto-review plugin works
+- [x] Clarified that explicit configuration is optional
 
 ## In Progress
-- [x] Documentation updates for plugin installation
+- [x] Documentation improvements for the auto-review feature
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify plugin works with both file types
-2. Add user feedback mechanism for plugin effectiveness
+1. Verify the auto-loading behavior works across different OpenCode versions
+2. Consider adding more detailed usage examples in the documentation
