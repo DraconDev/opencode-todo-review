@@ -1,21 +1,33 @@
 # Project State
 
 ## Current Focus
-docs(readme): updated plugin documentation for todo detection patterns
+Enhanced debug logging and tracing for the auto-review plugin to track todo completion state and session management
 
 ## Context
-The auto-review plugin needs clearer documentation about how it detects and handles todos in message text. This change improves user understanding of the plugin's behavior.
+This change adds comprehensive debug logging to the auto-review plugin to help track:
+- Todo extraction and matching
+- Session state changes
+- Event processing
+- Review triggering conditions
+- Error handling
+This follows previous work on improving plugin documentation and debugging capabilities.
 
 ## Completed
-- [x] Added "todo <text>" as a supported pattern in the documentation
-- [x] Clarified that checkbox UI completions won't trigger reviews
+- [x] Added debug logging infrastructure with configurable output to `/tmp/auto-review-debug.log`
+- [x] Instrumented all major plugin functions with debug statements
+- [x] Added detailed logging for todo detection, completion, and state changes
+- [x] Included session lifecycle tracking (creation, cleanup, idle states)
+- [x] Added event processing logging
+- [x] Included error handling logging
+- [x] Added debug output for all state transitions
 
 ## In Progress
-- [x] Documentation updates for todo handling
+- [x] Debug logging implementation is complete
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify the updated documentation matches the plugin's actual behavior
-2. Consider adding examples of the new "todo <text>" pattern in usage documentation
+1. Verify debug output quality with test cases
+2. Document debug logging configuration options
+3. Consider adding log rotation for production use
