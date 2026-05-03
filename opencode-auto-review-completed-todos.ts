@@ -44,6 +44,7 @@ const TODO_CREATION_PATTERNS = [
   /^\s*\[ \]\s+(.+)$/gim,
   /\bTODO:\s*(.+?)(?:\n|$)/gim,
   /\btodo:\s*(.+?)(?:\n|$)/gim,
+  /\btodo\s+(\S.+?)(?:\n|$)/gim,
 ];
 
 const TODO_COMPLETION_PATTERNS = [

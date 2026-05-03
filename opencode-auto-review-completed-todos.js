@@ -18,7 +18,8 @@ var TODO_CREATION_PATTERNS = [
   /^\s*- \[ \]\s+(.+)$/gim,
   /^\s*\[ \]\s+(.+)$/gim,
   /\bTODO:\s*(.+?)(?:\n|$)/gim,
-  /\btodo:\s*(.+?)(?:\n|$)/gim
+  /\btodo:\s*(.+?)(?:\n|$)/gim,
+  /\btodo\s+(\S.+?)(?:\n|$)/gim
 ];
 var TODO_COMPLETION_PATTERNS = [
   /^\s*- \[x\]\s+(.+)$/gim,
