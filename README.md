@@ -31,6 +31,7 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
 {
   "plugin": [
     ["opencode-auto-review-completed-todos", {
+      "debug": true,
       "levenshteinThreshold": 3,
       "debounceMs": 500,
       "bulkPhrases": ["all todos done", "all tasks completed", "all done", "all wrapped up", "everything done"],
@@ -42,6 +43,7 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `debug` | `boolean` | `false` | Enable verbose console logging for every event and todo detection |
 | `levenshteinThreshold` | `number` | `3` | Max edit distance for fuzzy todo matching. Higher = more lenient. |
 | `debounceMs` | `number` | `500` | Milliseconds to wait after last completion before triggering review. |
 | `bulkPhrases` | `string[]` | See defaults | Phrases that trigger bulk completion. Fuzzy-matched per-sentence. |
@@ -152,6 +154,8 @@ Plugin:
 To verify the plugin works:
 
 1. Start a new OpenCode session (plugins load at startup)
-2. Create todos: `Here are my tasks: - [ ] fix bug - [ ] update docs`
-3. Complete them: `done: fix bug` then `all done`
+2. Create todos **in message text**: `Here are my tasks: - [ ] fix bug - [ ] update docs` (the plugin watches message text, NOT OpenCode's internal todowrite tool)
+3. Complete them **via message text**: `done: fix bug` then `all done`
 4. Watch for the review prompt when all todos complete
+
+**Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.
