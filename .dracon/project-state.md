@@ -1,22 +1,23 @@
 # Project State
 
 ## Current Focus
-Updated plugin documentation to clarify plugin loading and debugging requirements.
+Simplified debug logging by replacing file-based logging with stderr output
 
 ## Context
-The recent changes to the auto-review plugin required clearer documentation about how to properly load and debug the plugin, especially since existing sessions won't pick up plugin changes.
+The previous debug logging system wrote to `/tmp/auto-review-debug.log` which created file system dependencies and required manual cleanup. This change simplifies debugging by using stderr output which is more standard and doesn't require file operations.
 
 ## Completed
-- [x] Added explicit instruction to restart OpenCode for plugin changes to take effect
-- [x] Documented debug log location and viewing instructions
-- [x] Clarified that debug logs are silent and require manual inspection
+- [x] Removed file-based debug logging system
+- [x] Replaced with stderr output for debug messages
+- [x] Updated README documentation to reflect the new logging approach
+- [x] Maintained all debug message content but changed the output mechanism
 
 ## In Progress
-- [x] Documentation updates for plugin behavior and debugging
+- [ ] No active work in progress
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify documentation clarity with user testing
-2. Consider adding plugin version checking to prevent compatibility issues
+1. Verify stderr output works as expected in production environments
+2. Consider adding log level configuration if needed

@@ -168,6 +168,7 @@ function extractTodos(text: string): string[] {
 // --- Plugin ---
 
 export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => {
+  console.error("[auto-review] PLUGIN LOADED");
   const rawOptions =
     typeof options === "object" && options !== null
       ? (options as Partial<AutoReviewConfig>)
@@ -226,6 +227,8 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
+
+    console.error("[auto-review] REVIEW TRIGGERED");
 
     try {
       await input.client.session.prompt({

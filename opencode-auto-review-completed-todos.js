@@ -111,20 +111,10 @@ function extractTodos(text) {
         todos.push(task);
     }
   }
-  if (todos.length > 0) dbg(`extractTodos: found [${todos.join(", ")}]`);
   return todos;
 }
 var AutoReviewCompletedTodosPlugin = async (input, options) => {
-  const DEBUG = true;
-  const logPath = "/tmp/auto-review-debug.log";
-  const dbg = (...args) => {
-    if (!DEBUG) return;
-    try {
-      const msg = args.join(" ") + "\n";
-      require("fs").appendFileSync(logPath, msg);
-    } catch (e) {}
-  };
-  dbg("=== PLUGIN LOADED ===");
+  console.error("[auto-review] PLUGIN LOADED");
   const rawOptions = typeof options === "object" && options !== null ? options : {};
   const config = {
     levenshteinThreshold: Math.max(0, Math.min(10, rawOptions.levenshteinThreshold ?? DEFAULT_OPTIONS.levenshteinThreshold)),
@@ -147,12 +137,10 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         sourceTodos: new Map,
         messageParts: new Map
       });
-      dbg(`ensureSession: created new session ${id}`);
     }
     return sessions.get(id);
   }
   function cleanupSession(id) {
-    dbg(`cleanupSession: ${id}`);
     const state = sessions.get(id);
     if (state?.debounceTimer) {
       clearTimeout(state.debounceTimer);
@@ -161,7 +149,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   async function triggerReview(sessionId) {
     const state = sessions.get(sessionId);
-    dbg(`triggerReview called: sessionId=${sessionId}, state exists=${!!state}, reviewFired=${state?.reviewFired}, todos=${state?.todos?.size}, hadTodos=${state?.hadTodos}`);
     if (!state || state.reviewFired)
       return;
     state.reviewFired = true;
@@ -169,7 +156,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    dbg(`triggerReview: INJECTING REVIEW PROMPT for ${sessionId}`);
+    console.error("[auto-review] REVIEW TRIGGERED");
     try {
       await input.client.session.prompt({
         body: {
@@ -179,20 +166,17 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         path: { id: sessionId }
       });
     } catch (err) {
-      dbg(`triggerReview error: ${err}`);
+      // silently swallow
     }
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
-    dbg(`scheduleReview: sessionId=${sessionId}, state exists=${!!state}, reviewFired=${state?.reviewFired}, todos=${state?.todos?.size}, hadTodos=${state?.hadTodos}`);
     if (!state || state.reviewFired)
       return;
     if (state.debounceTimer) {
       clearTimeout(state.debounceTimer);
     }
-    dbg(`scheduleReview: SETTING TIMER for ${sessionId}, debounceMs=${config.debounceMs}`);
     state.debounceTimer = setTimeout(() => {
-      dbg(`scheduleReview TIMEOUT: sessionId=${sessionId}, todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos}`);
       if (state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
         triggerReview(sessionId);
       }
@@ -261,24 +245,20 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   function applySourceDiff(state, sourceKey, newTodos) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
-    dbg(`applySourceDiff: source=${sourceKey}, oldTodos=[${oldTodos.join(", ")}], newTodos=[${newTodos.join(", ")}]`);
     for (const oldTodo of oldTodos) {
       if (!newTodos.includes(oldTodo) && !todoExistsInOtherSources(state, sourceKey, oldTodo)) {
         state.todos.delete(oldTodo);
-        dbg(`applySourceDiff: removed "${oldTodo}"`);
       }
     }
     for (const newTodo of newTodos) {
       if (!isDuplicateTodo(newTodo, state.todos)) {
         state.todos.add(newTodo);
-        dbg(`applySourceDiff: registered "${newTodo}"`);
       }
     }
     if (newTodos.length > 0 || state.todos.size > 0) {
       state.hadTodos = true;
     }
     state.sourceTodos.set(sourceKey, newTodos);
-    dbg(`applySourceDiff: state now has ${state.todos.size} todos, hadTodos=${state.hadTodos}`);
   }
   function removeSource(state, sourceKey) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
@@ -292,11 +272,8 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   function detectAndCompleteTodos(text, sessionId) {
     const state = getSession(sessionId);
-    if (!state || state.todos.size === 0) {
-      dbg(`detectAndCompleteTodos: session=${sessionId}, no active todos`);
+    if (!state || state.todos.size === 0)
       return;
-    }
-    dbg(`detectAndCompleteTodos: session=${sessionId}, checking "${text.slice(0,60)}" against ${state.todos.size} todos`);
     for (const pattern of TODO_COMPLETION_PATTERNS) {
       let match;
       const regex = new RegExp(pattern.source, pattern.flags);
@@ -307,13 +284,11 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         const matchedTodo = findMatchingTodo(task, state.todos, config.levenshteinThreshold);
         if (matchedTodo) {
           state.todos.delete(matchedTodo);
-          dbg(`detectAndCompleteTodos: COMPLETED "${matchedTodo}" (matched text: "${task}")`);
         }
       }
     }
     const matchedPhrase = findMatchingBulkPhrase(text, config.bulkPhrases);
     if (matchedPhrase) {
-      dbg(`detectAndCompleteTodos: BULK COMPLETE phrase="${matchedPhrase}" clearing ${state.todos.size} todos`);
       state.todos.clear();
       state.textSources.clear();
       state.sourceTodos.clear();
@@ -323,9 +298,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   function checkAndScheduleReview(sessionId) {
     const state = getSession(sessionId);
-    dbg(`checkAndScheduleReview: session=${sessionId}, todos=${state?.todos?.size}, fired=${state?.reviewFired}, had=${state?.hadTodos}`);
     if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
-      dbg(`checkAndScheduleReview: CALLING scheduleReview for ${sessionId}`);
       scheduleReview(sessionId);
     }
   }
@@ -339,7 +312,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     event: async ({ event }) => {
       const e = event;
       const eventType = event?.type || "unknown";
-      dbg(`EVENT: ${eventType}`);
       let sessionId = e?.properties?.sessionID ?? e?.properties?.part?.sessionID;
       if (!sessionId) {
         const msgId2 = getMessageId(e);
@@ -349,7 +321,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
           sessionId = `_orphan_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
         }
       }
-      dbg(`  sessionId=${sessionId}`);
       if (event?.type === "session.created") {
         cleanupSession(sessionId);
         return;
@@ -367,11 +338,8 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         return;
       }
       if (event?.type === "session.idle") {
-        dbg(`session.idle: session=${sessionId}`);
         const state = getSession(sessionId);
-        dbg(`  idle state: todos=${state?.todos?.size}, fired=${state?.reviewFired}, had=${state?.hadTodos}`);
         if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
-          dbg(`session.idle: TRIGGER REVIEW for ${sessionId}`);
           if (state.debounceTimer) {
             clearTimeout(state.debounceTimer);
             state.debounceTimer = null;
