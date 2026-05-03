@@ -1,22 +1,22 @@
 # Project State
 
 ## Current Focus
-Added debugging documentation for the auto-review plugin.
+Updated plugin documentation to clarify plugin loading and debugging requirements.
 
 ## Context
-To improve troubleshooting, the plugin now documents how to enable debug logging and where to find logs.
+The recent changes to the auto-review plugin required clearer documentation about how to properly load and debug the plugin, especially since existing sessions won't pick up plugin changes.
 
 ## Completed
-- [x] Added debugging section to README with instructions for enabling debug mode
-- [x] Documented debug log location (`/tmp/auto-review-debug.log`)
-- [x] Clarified log clearing instructions
+- [x] Added explicit instruction to restart OpenCode for plugin changes to take effect
+- [x] Documented debug log location and viewing instructions
+- [x] Clarified that debug logs are silent and require manual inspection
 
 ## In Progress
-- [x] Documentation for debugging is now available
+- [x] Documentation updates for plugin behavior and debugging
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify debug logging works as documented
-2. Consider adding more detailed debug scenarios if needed
+1. Verify documentation clarity with user testing
+2. Consider adding plugin version checking to prevent compatibility issues

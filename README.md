@@ -163,7 +163,7 @@ Plugin:
 
 To verify the plugin works:
 
-1. Start a new OpenCode session (plugins load at startup)
+1. **Restart OpenCode** to load the plugin (plugins load at startup, existing sessions won't pick up changes)
 2. Create todos **in message text**: `Here are my tasks: - [ ] fix bug - [ ] update docs`
 3. Complete them **via message text**: `done: fix bug` then `all done`
 4. Watch for the review prompt when all todos complete
@@ -173,3 +173,8 @@ To verify the plugin works:
 ## Debugging
 
 To diagnose issues, set `DEBUG = true` in the `.js` file (near the top). Debug logs are written to `/tmp/auto-review-debug.log` — no console output, no UI pollution. Clear the log with `> /tmp/auto-review-debug.log` between tests.
+
+Check the log after testing:
+```bash
+cat /tmp/auto-review-debug.log
+```
