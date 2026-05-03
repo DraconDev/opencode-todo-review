@@ -1,27 +1,25 @@
 # Project State
 
 ## Current Focus
-Enhanced debug logging and tracing for the auto-review plugin to track todo state and operations
+Enhanced debug logging and tracing for the auto-review plugin to track todo lifecycle events
 
 ## Context
-This change improves observability of the auto-review plugin's todo tracking system by adding detailed trace logging throughout the codebase. This helps with debugging and understanding the plugin's behavior during operation.
+The auto-review plugin needs better visibility into todo detection, completion, and state management to improve debugging and troubleshooting capabilities.
 
 ## Completed
-- [x] Added comprehensive trace logging for all major operations (todo registration, completion, removal)
-- [x] Added session-specific tracing with unique identifiers
-- [x] Enhanced event handling with detailed logging
-- [x] Added state tracking logging to monitor todo counts and completion status
-- [x] Improved debug output for todo matching and pattern detection
-- [x] Added bulk completion detection logging
-- [x] Replaced generic log statements with more specific trace messages
+- [x] Added comprehensive tracing for todo extraction, registration, completion, and removal
+- [x] Enhanced session state tracking with detailed debug messages
+- [x] Added event logging for plugin lifecycle and session operations
+- [x] Improved visibility into debounce timing and review triggering
+- [x] Added text content sampling for todo detection analysis
 
 ## In Progress
-- [x] Implementation of detailed tracing throughout the plugin
+- [x] Debug logging implementation for tracking todo lifecycle events
 
 ## Blockers
-- None identified
+- None identified in this change
 
 ## Next Steps
-1. Verify trace output quality in test environments
-2. Document the new logging format for debugging purposes
-3. Consider adding performance metrics to the tracing
+1. Verify debug output quality in various usage scenarios
+2. Consider adding performance metrics for large todo sets
+3. Evaluate log verbosity options for production vs development

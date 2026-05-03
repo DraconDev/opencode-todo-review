@@ -155,6 +155,7 @@ function extractTodos(text: string): string[] {
       if (task) todos.push(task);
     }
   }
+  if (todos.length > 0) trace(`extractTodos found: ${JSON.stringify(todos)}`);
   return todos;
 }
 
@@ -194,7 +195,10 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     }
   };
 
+  const trace = (msg: string) => console.error(`[auto-review] ${msg}`);
+
   log("info", "AutoReviewCompletedTodosPlugin loaded");
+  trace("PLUGIN LOADED");
 
   const sessions = new Map<string, SessionState>();
 
@@ -237,6 +241,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     }
 
     log("info", `Review triggered for session ${sessionId}`);
+    trace(`TRIGGER REVIEW for ${sessionId}`);
 
     try {
       await input.client.session.prompt({
@@ -259,7 +264,10 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       clearTimeout(state.debounceTimer);
     }
 
+    trace(`SCHEDULE REVIEW in ${config.debounceMs}ms for ${sessionId} (todos=${state.todos.size}, had=${state.hadTodos})`);
+
     state.debounceTimer = setTimeout(() => {
+      trace(`DEBOUNCE FIRED for ${sessionId} (todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos})`);
       if (state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
         triggerReview(sessionId);
       }
@@ -354,6 +362,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     for (const oldTodo of oldTodos) {
       if (!newTodos.includes(oldTodo) && !todoExistsInOtherSources(state, sourceKey, oldTodo)) {
         state.todos.delete(oldTodo);
+        trace(`REMOVED from source ${sourceKey}: "${oldTodo}"`);
       }
     }
 
@@ -361,7 +370,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     for (const newTodo of newTodos) {
       if (!isDuplicateTodo(newTodo, state.todos)) {
         state.todos.add(newTodo);
-        log("info", `Todo registered: "${newTodo}"`);
+        trace(`REGISTERED: "${newTodo}" (source: ${sourceKey})`);
       }
     }
 
@@ -370,6 +379,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     }
 
     state.sourceTodos.set(sourceKey, newTodos);
+    trace(`STATE: ${state.todos.size} todos, hadTodos=${state.hadTodos}`);
   }
 
   function removeSource(state: SessionState, sourceKey: string) {
@@ -387,7 +397,11 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
 
   function detectAndCompleteTodos(text: string, sessionId: string) {
     const state = getSession(sessionId);
-    if (!state || state.todos.size === 0) return;
+    if (!state || state.todos.size === 0) {
+      trace(`detectAndCompleteTodos: no active todos for ${sessionId}`);
+      return;
+    }
+    trace(`detectAndCompleteTodos checking text: "${text.slice(0, 80)}" for ${state.todos.size} todos`);
 
     for (const pattern of TODO_COMPLETION_PATTERNS) {
       let match: RegExpExecArray | null;
@@ -399,14 +413,14 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         const matchedTodo = findMatchingTodo(task, state.todos, config.levenshteinThreshold);
         if (matchedTodo) {
           state.todos.delete(matchedTodo);
-          log("info", `Todo completed: "${matchedTodo}"`);
+          trace(`COMPLETED: "${matchedTodo}" (matched: "${task}")`);
         }
       }
     }
 
     const matchedPhrase = findMatchingBulkPhrase(text, config.bulkPhrases);
     if (matchedPhrase) {
-      log("info", `Bulk completion detected: "${matchedPhrase}"`);
+      trace(`BULK COMPLETE: "${matchedPhrase}" - clearing ${state.todos.size} todos`);
       state.todos.clear();
       state.textSources.clear();
       state.sourceTodos.clear();
@@ -451,6 +465,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       }
 
       log("info", `Event: ${eventType} | session: ${sessionId}`);
+      trace(`EVENT: ${eventType} | SESSION: ${sessionId}`);
 
       // Session lifecycle
       if (event?.type === "session.created") {
