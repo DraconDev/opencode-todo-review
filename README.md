@@ -170,10 +170,10 @@ To verify the plugin works:
 
 **Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `todo <text>`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.
 
-## Debugging
+## Runtime Confirmation
 
-The plugin logs two key events to stderr (terminal):
-- `[auto-review] PLUGIN LOADED` — when the plugin initializes
-- `[auto-review] REVIEW TRIGGERED` — when the review prompt is injected
+The plugin outputs two confirmatory messages to terminal stderr:
+- `[auto-review] PLUGIN LOADED` — on startup
+- `[auto-review] REVIEW TRIGGERED` — when review prompt is injected
 
-These two lines won't flood your UI but confirm the plugin is running and review fires.
+These appear in your terminal only (not in OpenCode UI). They confirm the plugin initialized and review fired.
