@@ -1,22 +1,27 @@
 # Project State
 
 ## Current Focus
-Removed debug logging functionality from the auto-review plugin
+Enhanced debug logging and tracing for the auto-review plugin to track todo state and operations
 
 ## Context
-The debug logging feature was previously used for development and troubleshooting but was not intended for production use. This change removes all debug-related code to simplify the plugin and reduce unnecessary console output.
+This change improves observability of the auto-review plugin's todo tracking system by adding detailed trace logging throughout the codebase. This helps with debugging and understanding the plugin's behavior during operation.
 
 ## Completed
-- [x] Removed `debug` configuration option from README.md
-- [x] Removed all debug-related code from both JavaScript and TypeScript implementations
-- [x] Eliminated debug logging calls throughout the plugin code
+- [x] Added comprehensive trace logging for all major operations (todo registration, completion, removal)
+- [x] Added session-specific tracing with unique identifiers
+- [x] Enhanced event handling with detailed logging
+- [x] Added state tracking logging to monitor todo counts and completion status
+- [x] Improved debug output for todo matching and pattern detection
+- [x] Added bulk completion detection logging
+- [x] Replaced generic log statements with more specific trace messages
 
 ## In Progress
-- [ ] None
+- [x] Implementation of detailed tracing throughout the plugin
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify the plugin continues to function correctly without debug features
-2. Update documentation to reflect the removal of debug capabilities
+1. Verify trace output quality in test environments
+2. Document the new logging format for debugging purposes
+3. Consider adding performance metrics to the tracing
