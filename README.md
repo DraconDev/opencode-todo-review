@@ -84,8 +84,8 @@ When a source updates, the plugin diffs its old extracted todos against its new 
 | `message.created` / `message.updated` | Extract todos from message text, update source |
 | `message.part.delta` | Accumulate text, update source |
 | `message.part.updated` / `message.part.added` | Replace text, update source |
-| `message.part.removed` | Remove part source, rebuild todos |
-| `message.removed` | Remove message source + all tracked parts |
+| `message.part.removed` | Remove part source, diff todos (don't recreate from other sources) |
+| `message.removed` | Remove message source + all its tracked parts, diff todos |
 | `session.idle` | Trigger review if todos empty and not yet fired |
 | `session.error` / `ended` / `deleted` / `compacted` | Clean up session state |
 

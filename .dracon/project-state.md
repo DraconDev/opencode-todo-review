@@ -1,22 +1,21 @@
 # Project State
 
 ## Current Focus
-Improved plugin documentation and added test flow instructions for the auto-review feature.
+Improved documentation for the auto-review plugin's todo handling behavior.
 
 ## Context
-The auto-review plugin now auto-loads from the plugins directory, eliminating the need for manual configuration entries. This change simplifies setup while maintaining flexibility for customization.
+The change clarifies how the auto-review plugin handles todo updates when message parts are removed or messages are deleted, ensuring accurate todo tracking without unnecessary recreation.
 
 ## Completed
-- [x] Updated plugin installation documentation to reflect auto-loading behavior
-- [x] Added test flow instructions for verifying the auto-review plugin works
-- [x] Clarified that explicit configuration is optional
+- [x] Updated documentation to specify that part removal only diffs todos (doesn't recreate from other sources)
+- [x] Clarified that message removal cleans up all tracked parts and diffs todos
 
 ## In Progress
-- [x] Documentation improvements for the auto-review feature
+- [ ] No active work in progress
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify the auto-loading behavior works across different OpenCode versions
-2. Consider adding more detailed usage examples in the documentation
+1. Verify the documentation aligns with the plugin's actual behavior
+2. Consider adding integration tests for the described scenarios
