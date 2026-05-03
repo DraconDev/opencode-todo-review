@@ -164,8 +164,8 @@ Plugin:
 To verify the plugin works:
 
 1. Start a new OpenCode session (plugins load at startup)
-2. Create todos **in message text**: `Here are my tasks: - [ ] fix bug - [ ] update docs` (the plugin watches message text, NOT OpenCode's internal todowrite tool)
+2. Create todos **in message text**: `Here are my tasks: - [ ] fix bug - [ ] update docs`
 3. Complete them **via message text**: `done: fix bug` then `all done`
 4. Watch for the review prompt when all todos complete
 
-**Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.
+**Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `todo <text>`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.

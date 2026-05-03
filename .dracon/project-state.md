@@ -1,20 +1,21 @@
 # Project State
 
 ## Current Focus
-docs(readme): updated plugin logging documentation to reflect silent operation
+docs(readme): updated plugin documentation for todo detection patterns
 
 ## Context
-The auto-review plugin previously logged debug information to the console, which was useful during development but unnecessary for production use. This change aligns the documentation with the actual behavior.
+The auto-review plugin needs clearer documentation about how it detects and handles todos in message text. This change improves user understanding of the plugin's behavior.
 
 ## Completed
-- [x] updated README to clarify that the plugin runs silently without console output
+- [x] Added "todo <text>" as a supported pattern in the documentation
+- [x] Clarified that checkbox UI completions won't trigger reviews
 
 ## In Progress
-- [x] none
+- [x] Documentation updates for todo handling
 
 ## Blockers
-- none
+- None
 
 ## Next Steps
-1. verify plugin behavior matches documentation
-2. consider adding user-configurable logging levels if needed
+1. Verify the updated documentation matches the plugin's actual behavior
+2. Consider adding examples of the new "todo <text>" pattern in usage documentation
