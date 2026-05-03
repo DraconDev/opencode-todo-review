@@ -1,6 +1,7 @@
 // @bun
 // opencode-auto-review-completed-todos.ts
 var DEFAULT_OPTIONS = {
+  debug: false,
   levenshteinThreshold: 3,
   reviewPrompt: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
   bulkPhrases: [

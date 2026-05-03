@@ -1,21 +1,23 @@
 # Project State
 
 ## Current Focus
-Added support for standalone "todo" markers in the auto-review plugin.
+Added debug logging capability to the auto-review plugin for tracking todo extraction and processing.
 
 ## Context
-The auto-review plugin needed to recognize completed todos that use standalone "todo" markers (without colons) for consistency with other todo formats.
+To improve debugging and visibility into the auto-review plugin's operation, we needed to add debug logging that can be enabled through configuration.
 
 ## Completed
-- [x] Added new regex pattern `/\btodo\s+(\S.+?)(?:\n|$)/gim` to match standalone todo markers
-- [x] Maintained consistency with existing patterns in both JavaScript and TypeScript files
+- [x] Added `debug` option to configuration interface
+- [x] Implemented debug logging for todo extraction
+- [x] Added debug output for session state changes
+- [x] Created debug logging function that respects the debug flag
 
 ## In Progress
-- [x] Implementation of the new pattern across both code files
+- [x] Debug logging implementation is complete
 
 ## Blockers
 - None identified
 
 ## Next Steps
-1. Verify the new pattern works with existing test cases
-2. Update documentation to reflect the new pattern support
+1. Test debug logging in various scenarios to verify it provides useful information
+2. Consider adding more debug points for additional plugin operations

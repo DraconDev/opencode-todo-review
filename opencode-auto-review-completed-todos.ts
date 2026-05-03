@@ -3,6 +3,7 @@ import type { Plugin } from "@opencode-ai/plugin";
 // --- Configuration ---
 
 interface AutoReviewConfig {
+  debug: boolean;
   levenshteinThreshold: number;
   reviewPrompt: string;
   bulkPhrases: string[];
@@ -10,6 +11,7 @@ interface AutoReviewConfig {
 }
 
 const DEFAULT_OPTIONS: AutoReviewConfig = {
+  debug: false,
   levenshteinThreshold: 3,
   reviewPrompt:
     "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
@@ -169,6 +171,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       : {};
 
   const config: AutoReviewConfig = {
+    debug: rawOptions.debug ?? DEFAULT_OPTIONS.debug,
     levenshteinThreshold: Math.max(
       0,
       Math.min(10, rawOptions.levenshteinThreshold ?? DEFAULT_OPTIONS.levenshteinThreshold)
@@ -184,6 +187,10 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
   };
 
   const log = (level: "info" | "error", message: string) => {
+    if (config.debug) {
+      const fn = level === "error" ? console.error : console.log;
+      fn(`[auto-review:debug] ${message}`);
+    }
     if (typeof input.client.app?.log === "function") {
       input.client.app.log({
         body: { service: "auto-review", level, message },
@@ -428,6 +435,9 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
   function processSourceUpdate(sessionId: string, sourceKey: string, text: string) {
     const state = ensureSession(sessionId);
     const newTodos = extractTodos(text);
+    if (config.debug && newTodos.length > 0) {
+      log("info", `extractTodos found ${newTodos.length} todos in source ${sourceKey}: ${JSON.stringify(newTodos)}`);
+    }
     state.textSources.set(sourceKey, text);
     applySourceDiff(state, sourceKey, newTodos);
   }
