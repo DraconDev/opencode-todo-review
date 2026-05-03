@@ -1,16 +1,15 @@
 # Project State
 
 ## Current Focus
-Added debug logging capability to the auto-review plugin for tracking todo extraction and processing.
+Added debug logging and enhanced todo extraction debugging for the auto-review plugin
 
 ## Context
-To improve debugging and visibility into the auto-review plugin's operation, we needed to add debug logging that can be enabled through configuration.
+This change improves observability of the auto-review plugin by adding debug logging capabilities and enhanced visibility into todo extraction. This helps with development and troubleshooting by providing more detailed output during plugin execution.
 
 ## Completed
-- [x] Added `debug` option to configuration interface
+- [x] Added debug logging configuration option
 - [x] Implemented debug logging for todo extraction
-- [x] Added debug output for session state changes
-- [x] Created debug logging function that respects the debug flag
+- [x] Enhanced debug output to show extracted todos with their content
 
 ## In Progress
 - [x] Debug logging implementation is complete
@@ -19,5 +18,5 @@ To improve debugging and visibility into the auto-review plugin's operation, we 
 - None identified
 
 ## Next Steps
-1. Test debug logging in various scenarios to verify it provides useful information
-2. Consider adding more debug points for additional plugin operations
+1. Verify debug logging works as expected in development environment
+2. Consider adding more debug points for other plugin operations if needed
