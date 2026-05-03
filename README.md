@@ -169,3 +169,7 @@ To verify the plugin works:
 4. Watch for the review prompt when all todos complete
 
 **Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `todo <text>`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.
+
+## Debugging
+
+To diagnose issues, set `DEBUG = true` in the `.js` file (near the top). Debug logs are written to `/tmp/auto-review-debug.log` — no console output, no UI pollution. Clear the log with `> /tmp/auto-review-debug.log` between tests.

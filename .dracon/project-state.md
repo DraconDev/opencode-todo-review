@@ -1,33 +1,22 @@
 # Project State
 
 ## Current Focus
-Enhanced debug logging and tracing for the auto-review plugin to track todo completion state and session management
+Added debugging documentation for the auto-review plugin.
 
 ## Context
-This change adds comprehensive debug logging to the auto-review plugin to help track:
-- Todo extraction and matching
-- Session state changes
-- Event processing
-- Review triggering conditions
-- Error handling
-This follows previous work on improving plugin documentation and debugging capabilities.
+To improve troubleshooting, the plugin now documents how to enable debug logging and where to find logs.
 
 ## Completed
-- [x] Added debug logging infrastructure with configurable output to `/tmp/auto-review-debug.log`
-- [x] Instrumented all major plugin functions with debug statements
-- [x] Added detailed logging for todo detection, completion, and state changes
-- [x] Included session lifecycle tracking (creation, cleanup, idle states)
-- [x] Added event processing logging
-- [x] Included error handling logging
-- [x] Added debug output for all state transitions
+- [x] Added debugging section to README with instructions for enabling debug mode
+- [x] Documented debug log location (`/tmp/auto-review-debug.log`)
+- [x] Clarified log clearing instructions
 
 ## In Progress
-- [x] Debug logging implementation is complete
+- [x] Documentation for debugging is now available
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify debug output quality with test cases
-2. Document debug logging configuration options
-3. Consider adding log rotation for production use
+1. Verify debug logging works as documented
+2. Consider adding more detailed debug scenarios if needed
