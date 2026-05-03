@@ -1,25 +1,20 @@
 # Project State
 
 ## Current Focus
-Removed debug logging and tracing functionality from the auto-review plugin
+docs(readme): updated plugin logging documentation to reflect silent operation
 
 ## Context
-The plugin was previously generating excessive debug output, which was making it difficult to track actual application behavior. This change removes all debug logging to improve performance and reduce noise.
+The auto-review plugin previously logged debug information to the console, which was useful during development but unnecessary for production use. This change aligns the documentation with the actual behavior.
 
 ## Completed
-- [x] Removed all trace and debug logging statements
-- [x] Eliminated the logging utility function
-- [x] Cleaned up session cleanup logging
-- [x] Removed event type tracing
-- [x] Simplified todo detection logging
+- [x] updated README to clarify that the plugin runs silently without console output
 
 ## In Progress
-- [ ] None
+- [x] none
 
 ## Blockers
-- None
+- none
 
 ## Next Steps
-1. Verify plugin behavior without logging
-2. Monitor for any unexpected behavior that might indicate missing debug information
-```
+1. verify plugin behavior matches documentation
+2. consider adding user-configurable logging levels if needed

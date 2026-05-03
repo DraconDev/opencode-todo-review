@@ -28,7 +28,7 @@ Register in `opencode.json` to activate:
 ]
 ```
 
-Restart OpenCode to load. Debug logs visible in terminal with `debug: true` config.
+Restart OpenCode to load. Plugin runs silently — no console output.
 
 ## Configuration
 
