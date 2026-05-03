@@ -1,24 +1,26 @@
 # Project State
 
 ## Current Focus
-Improved documentation for the auto-review plugin that triggers when all session todos are completed.
+Enhanced the auto-review plugin's documentation with detailed technical implementation and configuration options.
 
 ## Context
-The plugin now automatically summarizes accomplishments, technical decisions, and follow-ups when all todos are done. This change updates the documentation to reflect the new behavior and configuration options.
+The plugin now needs comprehensive documentation to explain its advanced features and configuration options for users and contributors.
 
 ## Completed
-- [x] Added installation instructions
-- [x] Documented configuration options with types and descriptions
-- [x] Added a "How it works" flow diagram
-- [x] Clarified requirements
-- [x] Improved the description of what the plugin does
+- [x] Added detailed architecture diagram of session state management
+- [x] Documented all event handling patterns and source tracking logic
+- [x] Expanded todo detection patterns with fuzzy matching examples
+- [x] Added complete configuration table with default values
+- [x] Included example flow showing both positive and negative cases
+- [x] Added requirements section with precise version constraints
 
 ## In Progress
-- [x] Documentation updates are complete
+- [ ] No active work in progress
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Test the plugin with various todo completion scenarios
-2. Gather user feedback on the review summaries
+1. Verify plugin behavior matches documented implementation
+2. Update example flows with real-world test cases
+3. Add troubleshooting section for common configuration issues
