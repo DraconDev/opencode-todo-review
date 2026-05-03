@@ -1,7 +1,6 @@
 // @bun
 // opencode-auto-review-completed-todos.ts
 var DEFAULT_OPTIONS = {
-  debug: false,
   levenshteinThreshold: 3,
   reviewPrompt: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
   bulkPhrases: [
@@ -118,17 +117,12 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   log("info", "AutoReviewCompletedTodosPlugin loaded");
   const rawOptions = typeof options === "object" && options !== null ? options : {};
   const config = {
-    debug: rawOptions.debug ?? DEFAULT_OPTIONS.debug,
     levenshteinThreshold: Math.max(0, Math.min(10, rawOptions.levenshteinThreshold ?? DEFAULT_OPTIONS.levenshteinThreshold)),
     reviewPrompt: typeof rawOptions.reviewPrompt === "string" && rawOptions.reviewPrompt.trim().length > 0 ? rawOptions.reviewPrompt : DEFAULT_OPTIONS.reviewPrompt,
     bulkPhrases: Array.isArray(rawOptions.bulkPhrases) ? rawOptions.bulkPhrases.filter((p) => typeof p === "string" && p.length > 0) : DEFAULT_OPTIONS.bulkPhrases,
     debounceMs: Math.max(0, Math.min(30000, rawOptions.debounceMs ?? DEFAULT_OPTIONS.debounceMs))
   };
   const log = (level, message) => {
-    if (config.debug) {
-      const fn = level === "error" ? console.error : console.log;
-      fn(`[auto-review:debug] ${message}`);
-    }
     if (typeof input.client.app?.log === "function") {
       input.client.app.log({
         body: { service: "auto-review", level, message }
@@ -329,9 +323,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   function processSourceUpdate(sessionId, sourceKey, text) {
     const state = ensureSession(sessionId);
     const newTodos = extractTodos(text);
-    if (config.debug && newTodos.length > 0) {
-      log("info", `extractTodos found ${newTodos.length} todos in source ${sourceKey}: ${JSON.stringify(newTodos)}`);
-    }
     state.textSources.set(sourceKey, text);
     applySourceDiff(state, sourceKey, newTodos);
   }

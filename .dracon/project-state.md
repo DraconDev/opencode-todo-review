@@ -1,24 +1,22 @@
 # Project State
 
 ## Current Focus
-Improved documentation for the auto-review plugin's todo handling behavior and configuration.
+Removed debug logging functionality from the auto-review plugin
 
 ## Context
-The plugin now supports more flexible todo detection patterns and clearer configuration instructions. The documentation updates reflect these changes to ensure users understand the new capabilities and requirements.
+The debug logging feature was previously used for development and troubleshooting but was not intended for production use. This change removes all debug-related code to simplify the plugin and reduce unnecessary console output.
 
 ## Completed
-- [x] Added explicit plugin registration instructions in `opencode.json`
-- [x] Clarified debug logging configuration requirements
-- [x] Expanded todo detection patterns with more examples
-- [x] Improved example flow to show review trigger conditions
-- [x] Added explicit review trigger rules documentation
+- [x] Removed `debug` configuration option from README.md
+- [x] Removed all debug-related code from both JavaScript and TypeScript implementations
+- [x] Eliminated debug logging calls throughout the plugin code
 
 ## In Progress
-- [ ] No active work in progress
+- [ ] None
 
 ## Blockers
 - None
 
 ## Next Steps
-1. Verify plugin behavior matches updated documentation
-2. Test edge cases in todo detection patterns
+1. Verify the plugin continues to function correctly without debug features
+2. Update documentation to reflect the removal of debug capabilities

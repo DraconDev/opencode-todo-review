@@ -38,7 +38,6 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
 {
   "plugin": [
     ["opencode-auto-review-completed-todos", {
-      "debug": true,
       "levenshteinThreshold": 3,
       "debounceMs": 500,
       "bulkPhrases": ["all todos done", "all tasks completed", "all done", "all wrapped up", "everything done"],
@@ -50,7 +49,6 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `debug` | `boolean` | `false` | Enable verbose console logging for every event and todo detection |
 | `levenshteinThreshold` | `number` | `3` | Max edit distance for fuzzy todo matching. Higher = more lenient. |
 | `debounceMs` | `number` | `500` | Milliseconds to wait after last completion before triggering review. |
 | `bulkPhrases` | `string[]` | See defaults | Phrases that trigger bulk completion. Fuzzy-matched per-sentence. |
