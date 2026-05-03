@@ -64,6 +64,8 @@ SessionState
 └── debounceTimer: Timer | null
 ```
 
+The `messageParts` map tracks which parts belong to which message. When `message.removed` fires, all associated parts are cleaned up. Without this, orphaned parts from deleted messages could leak into the todo set.
+
 ### Source tracking
 
 Every text source gets a unique key:

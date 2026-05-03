@@ -1,21 +1,20 @@
 # Project State
 
 ## Current Focus
-Improved documentation for the auto-review plugin's todo handling behavior.
+Added documentation for message part cleanup in the auto-review plugin.
 
 ## Context
-The change clarifies how the auto-review plugin handles todo updates when message parts are removed or messages are deleted, ensuring accurate todo tracking without unnecessary recreation.
+The change clarifies how the `messageParts` map prevents orphaned parts from leaking into the todo set when messages are removed.
 
 ## Completed
-- [x] Updated documentation to specify that part removal only diffs todos (doesn't recreate from other sources)
-- [x] Clarified that message removal cleans up all tracked parts and diffs todos
+- [x] Added documentation explaining the purpose of the `messageParts` map in tracking message parts
 
 ## In Progress
-- [ ] No active work in progress
+- [x] Documentation for message part cleanup is complete
 
 ## Blockers
 - None
 
 ## Next Steps
-1. Verify the documentation aligns with the plugin's actual behavior
-2. Consider adding integration tests for the described scenarios
+1. Review documentation for accuracy
+2. Continue improving plugin documentation as needed
