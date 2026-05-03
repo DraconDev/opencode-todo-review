@@ -1,6 +1,6 @@
 # opencode-auto-review-completed-todos
 
-Automatically triggers a final review when all session todos are completed.
+Never forget what you accomplished. This OpenCode plugin auto-reviews your session when all todos are done.
 
 ## What it does
 
