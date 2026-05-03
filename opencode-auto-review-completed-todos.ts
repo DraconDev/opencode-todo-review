@@ -104,7 +104,9 @@ function findMatchingTodo(
     }
     const dynamicThreshold = Math.min(
       threshold,
-      Math.max(todoNorm.length, normalized.length) > 5 ? threshold : Math.max(1, threshold - 1)
+      Math.max(todoNorm.length, normalized.length) > 5
+        ? threshold
+        : Math.max(1, threshold - 1)
     );
     if (levenshtein(todoNorm, normalized) <= dynamicThreshold) {
       return todo;
@@ -125,23 +127,28 @@ function isDuplicateTodo(taskText: string, todos: Set<string>): boolean {
 
 function findMatchingBulkPhrase(text: string, phrases: string[]): string | null {
   const normalizedText = normalizeTask(text);
+
   for (const phrase of phrases) {
     const normalizedPhrase = normalizeTask(phrase);
     if (normalizedText.includes(normalizedPhrase)) {
       return phrase;
     }
+
     const sentences = normalizedText.split(/[.!?]+/);
     for (const sentence of sentences) {
       const trimmed = sentence.trim();
       if (trimmed.length === 0) continue;
+
       if (trimmed.includes(normalizedPhrase)) {
         return phrase;
       }
+
       if (levenshtein(trimmed, normalizedPhrase) <= 2) {
         return phrase;
       }
     }
   }
+
   return null;
 }
 
@@ -155,15 +162,12 @@ function extractTodos(text: string): string[] {
       if (task) todos.push(task);
     }
   }
-  if (todos.length > 0) trace(`extractTodos found: ${JSON.stringify(todos)}`);
   return todos;
 }
 
 // --- Plugin ---
 
 export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => {
-  log("info", "AutoReviewCompletedTodosPlugin loaded");
-
   const rawOptions =
     typeof options === "object" && options !== null
       ? (options as Partial<AutoReviewConfig>)
@@ -183,22 +187,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       : DEFAULT_OPTIONS.bulkPhrases,
     debounceMs: Math.max(0, Math.min(30000, rawOptions.debounceMs ?? DEFAULT_OPTIONS.debounceMs)),
   };
-
-  const log = (level: "info" | "error", message: string) => {
-    if (typeof input.client.app?.log === "function") {
-      input.client.app.log({
-        body: { service: "auto-review", level, message },
-      });
-    } else {
-      const fn = level === "error" ? console.error : console.log;
-      fn(`[auto-review] ${message}`);
-    }
-  };
-
-  const trace = (msg: string) => console.error(`[auto-review] ${msg}`);
-
-  log("info", "AutoReviewCompletedTodosPlugin loaded");
-  trace("PLUGIN LOADED");
 
   const sessions = new Map<string, SessionState>();
 
@@ -227,7 +215,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       clearTimeout(state.debounceTimer);
     }
     sessions.delete(id);
-    log("info", `Cleaned up session ${id}`);
   }
 
   async function triggerReview(sessionId: string) {
@@ -240,9 +227,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       state.debounceTimer = null;
     }
 
-    log("info", `Review triggered for session ${sessionId}`);
-    trace(`TRIGGER REVIEW for ${sessionId}`);
-
     try {
       await input.client.session.prompt({
         body: {
@@ -252,7 +236,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         path: { id: sessionId },
       });
     } catch (err) {
-      log("error", `Failed to inject review prompt: ${err}`);
+      // silently swallow
     }
   }
 
@@ -264,10 +248,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       clearTimeout(state.debounceTimer);
     }
 
-    trace(`SCHEDULE REVIEW in ${config.debounceMs}ms for ${sessionId} (todos=${state.todos.size}, had=${state.hadTodos})`);
-
     state.debounceTimer = setTimeout(() => {
-      trace(`DEBOUNCE FIRED for ${sessionId} (todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos})`);
       if (state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
         triggerReview(sessionId);
       }
@@ -358,19 +339,15 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
   function applySourceDiff(state: SessionState, sourceKey: string, newTodos: string[]) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
 
-    // Remove todos that disappeared from this source (and don't exist elsewhere)
     for (const oldTodo of oldTodos) {
       if (!newTodos.includes(oldTodo) && !todoExistsInOtherSources(state, sourceKey, oldTodo)) {
         state.todos.delete(oldTodo);
-        trace(`REMOVED from source ${sourceKey}: "${oldTodo}"`);
       }
     }
 
-    // Add new todos from this source
     for (const newTodo of newTodos) {
       if (!isDuplicateTodo(newTodo, state.todos)) {
         state.todos.add(newTodo);
-        trace(`REGISTERED: "${newTodo}" (source: ${sourceKey})`);
       }
     }
 
@@ -379,7 +356,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
     }
 
     state.sourceTodos.set(sourceKey, newTodos);
-    trace(`STATE: ${state.todos.size} todos, hadTodos=${state.hadTodos}`);
   }
 
   function removeSource(state: SessionState, sourceKey: string) {
@@ -397,11 +373,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
 
   function detectAndCompleteTodos(text: string, sessionId: string) {
     const state = getSession(sessionId);
-    if (!state || state.todos.size === 0) {
-      trace(`detectAndCompleteTodos: no active todos for ${sessionId}`);
-      return;
-    }
-    trace(`detectAndCompleteTodos checking text: "${text.slice(0, 80)}" for ${state.todos.size} todos`);
+    if (!state || state.todos.size === 0) return;
 
     for (const pattern of TODO_COMPLETION_PATTERNS) {
       let match: RegExpExecArray | null;
@@ -413,14 +385,12 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         const matchedTodo = findMatchingTodo(task, state.todos, config.levenshteinThreshold);
         if (matchedTodo) {
           state.todos.delete(matchedTodo);
-          trace(`COMPLETED: "${matchedTodo}" (matched: "${task}")`);
         }
       }
     }
 
     const matchedPhrase = findMatchingBulkPhrase(text, config.bulkPhrases);
     if (matchedPhrase) {
-      trace(`BULK COMPLETE: "${matchedPhrase}" - clearing ${state.todos.size} todos`);
       state.todos.clear();
       state.textSources.clear();
       state.sourceTodos.clear();
@@ -432,10 +402,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
   function checkAndScheduleReview(sessionId: string) {
     const state = getSession(sessionId);
     if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
-      log("info", `Scheduling review for ${sessionId} (todos: 0, hadTodos: true)`);
       scheduleReview(sessionId);
-    } else if (state) {
-      log("info", `Review not scheduled: todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos}`);
     }
   }
 
@@ -449,8 +416,7 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
   return {
     event: async ({ event }: { event: any }) => {
       const e = event as any;
-      const eventType = event?.type || "unknown";
-      
+
       let sessionId =
         e?.properties?.sessionID ??
         e?.properties?.part?.sessionID;
@@ -464,10 +430,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         }
       }
 
-      log("info", `Event: ${eventType} | session: ${sessionId}`);
-      trace(`EVENT: ${eventType} | SESSION: ${sessionId}`);
-
-      // Session lifecycle
       if (event?.type === "session.created") {
         cleanupSession(sessionId);
         return;
@@ -488,7 +450,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         return;
       }
 
-      // Idle safety net
       if (event?.type === "session.idle") {
         const state = getSession(sessionId);
         if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
@@ -501,7 +462,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         return;
       }
 
-      // Message removed: clean up message source and all its tracked parts
       if (event?.type === "message.removed") {
         const msgId = getMessageId(e);
         if (msgId) {
@@ -521,7 +481,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         return;
       }
 
-      // Part removed: clean up that specific part source
       if (event?.type === "message.part.removed") {
         const partId = getPartId(e);
         if (partId) {
@@ -534,7 +493,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         return;
       }
 
-      // All other message events
       const messageEventTypes = [
         "message.created",
         "message.part.delta",
@@ -554,7 +512,6 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       const partId = getPartId(e);
       const msgId = getMessageId(e);
 
-      // Track which parts belong to which messages
       if (partId && msgId) {
         const state = ensureSession(sessionId);
         const parts = state.messageParts.get(msgId) || new Set();
@@ -562,17 +519,15 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
         state.messageParts.set(msgId, parts);
       }
 
-      // Delta events accumulate text
       if (event?.type === "message.part.delta") {
         const state = ensureSession(sessionId);
         const accumulated = (state.textSources.get(sourceKey) || "") + text;
         processSourceUpdate(sessionId, sourceKey, accumulated);
-        detectAndCompleteTodos(accumulated, sessionId);  // FIX: use accumulated, not raw
+        detectAndCompleteTodos(accumulated, sessionId);
         checkAndScheduleReview(sessionId);
         return;
       }
 
-      // All other events replace text
       processSourceUpdate(sessionId, sourceKey, text);
       detectAndCompleteTodos(text, sessionId);
       checkAndScheduleReview(sessionId);

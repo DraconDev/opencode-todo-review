@@ -111,12 +111,9 @@ function extractTodos(text) {
         todos.push(task);
     }
   }
-  if (todos.length > 0) trace(`extractTodos found: ${JSON.stringify(todos)}`);
   return todos;
 }
 var AutoReviewCompletedTodosPlugin = async (input, options) => {
-  const trace = (msg) => console.error(`[auto-review] ${msg}`);
-  trace("PLUGIN LOADED");
   const rawOptions = typeof options === "object" && options !== null ? options : {};
   const config = {
     levenshteinThreshold: Math.max(0, Math.min(10, rawOptions.levenshteinThreshold ?? DEFAULT_OPTIONS.levenshteinThreshold)),
@@ -124,17 +121,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     bulkPhrases: Array.isArray(rawOptions.bulkPhrases) ? rawOptions.bulkPhrases.filter((p) => typeof p === "string" && p.length > 0) : DEFAULT_OPTIONS.bulkPhrases,
     debounceMs: Math.max(0, Math.min(30000, rawOptions.debounceMs ?? DEFAULT_OPTIONS.debounceMs))
   };
-  const log = (level, message) => {
-    if (typeof input.client.app?.log === "function") {
-      input.client.app.log({
-        body: { service: "auto-review", level, message }
-      });
-    } else {
-      const fn = level === "error" ? console.error : console.log;
-      fn(`[auto-review] ${message}`);
-    }
-  };
-  log("info", "AutoReviewCompletedTodosPlugin loaded");
   const sessions = new Map;
   function getSession(id) {
     return sessions.get(id);
@@ -159,7 +145,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
       clearTimeout(state.debounceTimer);
     }
     sessions.delete(id);
-    log("info", `Cleaned up session ${id}`);
   }
   async function triggerReview(sessionId) {
     const state = sessions.get(sessionId);
@@ -170,7 +155,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    trace(`TRIGGER REVIEW for ${sessionId}`);
     try {
       await input.client.session.prompt({
         body: {
@@ -180,7 +164,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         path: { id: sessionId }
       });
     } catch (err) {
-      log("error", `Failed to inject review prompt: ${err}`);
+      // silently swallow
     }
   }
   function scheduleReview(sessionId) {
@@ -190,9 +174,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     if (state.debounceTimer) {
       clearTimeout(state.debounceTimer);
     }
-    trace(`SCHEDULE REVIEW in ${config.debounceMs}ms for ${sessionId} (todos=${state.todos.size}, had=${state.hadTodos})`);
     state.debounceTimer = setTimeout(() => {
-      trace(`DEBOUNCE FIRED for ${sessionId} (todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos})`);
       if (state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
         triggerReview(sessionId);
       }
@@ -264,20 +246,17 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     for (const oldTodo of oldTodos) {
       if (!newTodos.includes(oldTodo) && !todoExistsInOtherSources(state, sourceKey, oldTodo)) {
         state.todos.delete(oldTodo);
-        trace(`REMOVED from source ${sourceKey}: "${oldTodo}"`);
       }
     }
     for (const newTodo of newTodos) {
       if (!isDuplicateTodo(newTodo, state.todos)) {
         state.todos.add(newTodo);
-        trace(`REGISTERED: "${newTodo}" (source: ${sourceKey})`);
       }
     }
     if (newTodos.length > 0 || state.todos.size > 0) {
       state.hadTodos = true;
     }
     state.sourceTodos.set(sourceKey, newTodos);
-    trace(`STATE: ${state.todos.size} todos, hadTodos=${state.hadTodos}`);
   }
   function removeSource(state, sourceKey) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
@@ -291,11 +270,8 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   function detectAndCompleteTodos(text, sessionId) {
     const state = getSession(sessionId);
-    if (!state || state.todos.size === 0) {
-      trace(`detectAndCompleteTodos: no active todos for ${sessionId}`);
+    if (!state || state.todos.size === 0)
       return;
-    }
-    trace(`detectAndCompleteTodos checking text: "${text.slice(0, 80)}" for ${state.todos.size} todos`);
     for (const pattern of TODO_COMPLETION_PATTERNS) {
       let match;
       const regex = new RegExp(pattern.source, pattern.flags);
@@ -306,13 +282,11 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         const matchedTodo = findMatchingTodo(task, state.todos, config.levenshteinThreshold);
         if (matchedTodo) {
           state.todos.delete(matchedTodo);
-          trace(`COMPLETED: "${matchedTodo}" (matched: "${task}")`);
         }
       }
     }
     const matchedPhrase = findMatchingBulkPhrase(text, config.bulkPhrases);
     if (matchedPhrase) {
-      trace(`BULK COMPLETE: "${matchedPhrase}" - clearing ${state.todos.size} todos`);
       state.todos.clear();
       state.textSources.clear();
       state.sourceTodos.clear();
@@ -323,10 +297,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   function checkAndScheduleReview(sessionId) {
     const state = getSession(sessionId);
     if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
-      log("info", `Scheduling review for ${sessionId} (todos: 0, hadTodos: true)`);
       scheduleReview(sessionId);
-    } else if (state) {
-      log("info", `Review not scheduled: todos=${state.todos.size}, fired=${state.reviewFired}, had=${state.hadTodos}`);
     }
   }
   function processSourceUpdate(sessionId, sourceKey, text) {
@@ -339,7 +310,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     event: async ({ event }) => {
       const e = event;
       const eventType = event?.type || "unknown";
-      trace(`EVENT: ${eventType}`);
       let sessionId = e?.properties?.sessionID ?? e?.properties?.part?.sessionID;
       if (!sessionId) {
         const msgId2 = getMessageId(e);
@@ -349,7 +319,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
           sessionId = `_orphan_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
         }
       }
-      trace(`SESSION: ${sessionId}`);
       if (event?.type === "session.created") {
         cleanupSession(sessionId);
         return;
