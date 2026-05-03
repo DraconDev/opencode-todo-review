@@ -1,23 +1,22 @@
 # Project State
 
 ## Current Focus
-Simplified debug logging by replacing file-based logging with stderr output
+Improved documentation for the auto-review plugin's debug logging behavior.
 
 ## Context
-The previous debug logging system wrote to `/tmp/auto-review-debug.log` which created file system dependencies and required manual cleanup. This change simplifies debugging by using stderr output which is more standard and doesn't require file operations.
+The plugin previously had verbose debug logging that was confusing users. This change simplifies the documentation to focus on the two key stderr messages without implying they're file-based.
 
 ## Completed
-- [x] Removed file-based debug logging system
-- [x] Replaced with stderr output for debug messages
-- [x] Updated README documentation to reflect the new logging approach
-- [x] Maintained all debug message content but changed the output mechanism
+- [x] Updated debug logging documentation to clarify stderr output
+- [x] Removed references to file-based logging in favor of terminal output
+- [x] Simplified the explanation of debug messages
 
 ## In Progress
-- [ ] No active work in progress
+- [ ] None
 
 ## Blockers
 - None
 
 ## Next Steps
-1. Verify stderr output works as expected in production environments
-2. Consider adding log level configuration if needed
+1. Verify the documentation matches the actual plugin behavior
+2. Consider adding a configuration option to toggle debug output

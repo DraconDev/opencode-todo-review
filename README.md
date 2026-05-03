@@ -172,8 +172,8 @@ To verify the plugin works:
 
 ## Debugging
 
-When `DEBUG = true` is set in the `.js` file (line 2), two messages are logged to stderr:
+The plugin logs two key events to stderr (terminal):
 - `[auto-review] PLUGIN LOADED` — when the plugin initializes
 - `[auto-review] REVIEW TRIGGERED` — when the review prompt is injected
 
-These appear in your terminal. To enable, set `const DEBUG = true;` at line 2 of the `.js` file. Default is `false` (silent).
+These two lines won't flood your UI but confirm the plugin is running and review fires.
