@@ -1,14 +1,12 @@
 // @bun
 // opencode-auto-review-completed-todos.ts
 var DEFAULT_OPTIONS = {
-  reviewPrompt: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
   debounceMs: 500
 };
 function mergeOptions(raw) {
   if (!raw || typeof raw !== "object")
     return { ...DEFAULT_OPTIONS };
   return {
-    reviewPrompt: typeof raw.reviewPrompt === "string" && raw.reviewPrompt.length > 0 ? raw.reviewPrompt : DEFAULT_OPTIONS.reviewPrompt,
     debounceMs: typeof raw.debounceMs === "number" && raw.debounceMs > 0 ? raw.debounceMs : DEFAULT_OPTIONS.debounceMs
   };
 }
@@ -38,7 +36,6 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
   }
   async function triggerReview(sessionId) {
     const state = sessions.get(sessionId);
-    process.stderr.write("[auto-review] triggerReview called, state=" + (state ? "exists" : "null") + ", reviewFired=" + (state?.reviewFired) + "\n");
     if (!state || state.reviewFired)
       return;
     state.reviewFired = true;
@@ -46,7 +43,6 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    process.stderr.write("[auto-review] triggerReview: showing toast\n");
     try {
       await input.client.tui.showToast({
         query: { directory: input.directory },
@@ -62,11 +58,8 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
-    if (!state) {
-      process.stderr.write("[auto-review] scheduleReview: no state\n");
+    if (!state)
       return;
-    }
-    process.stderr.write("[auto-review] scheduleReview called, debounceMs=" + config.debounceMs + "\n");
     if (state.debounceTimer)
       clearTimeout(state.debounceTimer);
     state.debounceTimer = setTimeout(() => {
@@ -85,26 +78,18 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
     event: async ({ event }) => {
       const e = event;
       const sessionId = e?.properties?.sessionID ?? e?.properties?.info?.id ?? e?.properties?.path?.id;
-      process.stderr.write(`[auto-review] event type=${e?.type}, sessionId=${sessionId}\n`);
-      if (!sessionId) {
-        process.stderr.write("[auto-review] no sessionId, returning\n");
+      if (!sessionId)
         return;
-      }
       if (e.type === "session.deleted" || e.type === "session.error" || e.type === "session.compacted") {
         cleanupSession(sessionId);
         return;
       }
       if (e.type === "todo.updated") {
         const todos = e?.properties?.todos;
-        process.stderr.write(`[auto-review] todo.updated event, todos=${JSON.stringify(todos)}\n`);
-        if (!Array.isArray(todos)) {
-          process.stderr.write("[auto-review] todos not an array, returning\n");
+        if (!Array.isArray(todos))
           return;
-        }
         const state = ensureSession(sessionId);
-        const completed = allTodosCompleted(todos);
-        process.stderr.write(`[auto-review] todos count=${todos.length}, allDone=${completed}\n`);
-        if (completed) {
+        if (allTodosCompleted(todos)) {
           scheduleReview(sessionId);
         } else {
           cancelScheduledReview(sessionId);
