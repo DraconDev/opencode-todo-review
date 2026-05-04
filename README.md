@@ -1,10 +1,10 @@
 # opencode-auto-review-completed-todos
 
-Auto-detect when all session todos are completed and trigger a review prompt in the chat. Fires once per session.
+Auto-detect when all session todos are completed and trigger a review. Fires once per session.
 
 ## What it does
 
-Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it sends a review prompt message to the chat. If new pending todos appear before the debounce fires, the review is cancelled.
+Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it outputs `[auto-review] REVIEW TRIGGERED` to the terminal. If new pending todos appear before the debounce fires, the review is cancelled.
 
 This works with **any** todo source: the AI creating/checking todos via the todowrite tool, the user checking boxes in the UI, or the internal todo-reminder plugin.
 
@@ -32,8 +32,7 @@ Restart OpenCode. Confirm: `[auto-review] PLUGIN LOADED` in terminal.
 {
   "plugin": [
     ["opencode-auto-review-completed-todos", {
-      "debounceMs": 500,
-      "reviewPrompt": "All tasks in this session have been completed. Please perform a final review..."
+      "debounceMs": 500
     }]
   ]
 }
@@ -42,7 +41,6 @@ Restart OpenCode. Confirm: `[auto-review] PLUGIN LOADED` in terminal.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `debounceMs` | `number` | `500` | Wait after the last completed todo before triggering review |
-| `reviewPrompt` | `string` | (default message) | Text sent to chat when all todos are done |
 
 ## How it works
 
@@ -69,9 +67,8 @@ SessionState
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
 4. If all done → 500ms debounce timer starts
-5. Timer fires → `session.prompt()` sends review prompt text to chat
-6. User sees the review prompt message in chat
-7. AI responds with a session review summary
+5. Timer fires → outputs `[auto-review] REVIEW TRIGGERED` to terminal
+6. No message sent to chat — the notification is terminal-only
 
 ### Why not text parsing?
 
@@ -83,7 +80,7 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 
 Plugin successfully:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
-- Sends visible review prompt to chat when all todos are completed
+- Outputs `[auto-review] REVIEW TRIGGERED` to terminal when all todos are completed
 - Debounces to avoid premature triggering
 - Fires only once per session
 
