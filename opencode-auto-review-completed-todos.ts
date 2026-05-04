@@ -84,10 +84,11 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
       await input.client.session.prompt({
         path: { id: sessionId },
         body: {
+          system: config.reviewPrompt,
           parts: [
             {
               type: "text" as const,
-              text: config.reviewPrompt,
+              text: " ",
               synthetic: true,
             },
           ],
