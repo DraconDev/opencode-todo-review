@@ -112,19 +112,6 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
     }
   }
 
-  try {
-    await input.client.tui.showToast({
-      query: { directory: input.directory },
-      body: {
-        title: "Auto Review Plugin",
-        message: "Plugin loaded successfully",
-        variant: "success",
-      },
-    });
-  } catch {
-    process.stderr.write("[auto-review] PLUGIN LOADED\n");
-  }
-
   return {
     event: async ({ event }) => {
       // Extract session ID from various event shapes

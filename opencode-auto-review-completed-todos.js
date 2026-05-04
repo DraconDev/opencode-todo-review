@@ -76,18 +76,6 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       state.debounceTimer = null;
     }
   }
-  try {
-    await input.client.tui.showToast({
-      query: { directory: input.directory },
-      body: {
-        title: "Auto Review Plugin",
-        message: "Plugin loaded successfully",
-        variant: "success"
-      }
-    });
-  } catch (e) {
-    process.stderr.write("[auto-review] PLUGIN LOADED\n");
-  }
   return {
     event: async ({ event }) => {
       const e = event;

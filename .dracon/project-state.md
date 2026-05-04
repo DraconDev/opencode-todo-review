@@ -1,23 +1,21 @@
 # Project State
 
 ## Current Focus
-Replaced terminal-only auto-review notifications with user-facing toast notifications.
+Removed terminal notifications for the auto-review plugin
 
 ## Context
-The auto-review plugin previously silently marked sessions as reviewed in the terminal, which was invisible to users. This change makes the review completion more visible by showing a toast notification.
+The auto-review plugin was previously showing terminal notifications when loaded, which was replaced with user-facing toast notifications in a previous commit. This change removes the remaining terminal notification code to maintain consistency with the user-facing notification approach.
 
 ## Completed
-- [x] Replaced terminal-only review trigger with toast notification
-- [x] Updated documentation to clarify the new notification behavior
-- [x] Maintained the debounce mechanism for preventing premature triggers
-- [x] Kept the silent operation in chat (no chat messages)
+- [x] Removed terminal notification code from both JavaScript and TypeScript versions of the plugin
+- [x] Kept the existing user-facing toast notification functionality intact
 
 ## In Progress
-- [x] Testing toast notification reliability across different OpenCode versions
+- [x] No active work in progress
 
 ## Blockers
-- No blockers identified
+- None
 
 ## Next Steps
-1. Verify toast notifications work consistently in different UI environments
-2. Consider adding configuration options for toast duration/position
+1. Verify the plugin still functions correctly without the terminal notifications
+2. Update documentation to reflect the removal of terminal notifications
