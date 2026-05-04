@@ -1,22 +1,22 @@
 # Project State
 
 ## Current Focus
-Enhanced the auto-review plugin to provide a structured review prompt when all todos are completed.
+Updated the auto-review plugin to send a visible chat message when all todos are completed, replacing the previous toast notification.
 
 ## Context
-The plugin now replaces the simple toast notification with a more detailed review prompt that guides users through summarizing their work, noting technical decisions, and identifying follow-up tasks.
+The plugin now integrates more naturally with the chat workflow by sending a structured review prompt when all tasks are done, rather than using an intrusive corner toast.
 
 ## Completed
-- [x] Replaced toast notification with a structured review prompt
-- [x] Added detailed review guidance including work summary, technical decisions, documentation flags, and follow-up tasks
-- [x] Updated error logging to reflect the new prompt mechanism
+- [x] Changed toast notification to a visible chat message
+- [x] Updated documentation to reflect the new behavior
+- [x] Clarified the plugin's relationship with `opencode-todo-reminder`
 
 ## In Progress
-- [x] Implementation of the enhanced review prompt
+- [ ] No active work in progress
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify the new prompt structure works as expected in different scenarios
-2. Update documentation to reflect the new review process
+1. Verify the new message format works as expected in practice
+2. Ensure the AI responds appropriately to the review prompt

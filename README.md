@@ -1,14 +1,14 @@
 # opencode-auto-review-completed-todos
 
-Auto-detect when all session todos are completed and show a toast notification. Fires once per session.
+Auto-detect when all session todos are completed and send a review message. Fires once per session.
 
 ## What it does
 
-Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it shows a toast notification. If new pending todos appear before the debounce fires, the review is cancelled.
+Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it sends a review message to the chat. If new pending todos appear before the debounce fires, the review is cancelled.
 
 This works with **any** todo source: the AI creating/checking todos via the todowrite tool, the user checking boxes in the UI, or the internal todo-reminder plugin.
 
-**Design philosophy:** Non-intrusive. A brief toast appears in the corner — not in the chat conversation. No debug output, no flooding.
+**Design philosophy:** Pairs with `opencode-todo-reminder` as its complement. Todo-reminder nudges when tasks remain incomplete; this plugin triggers a review when all tasks are done.
 
 ## Install
 
@@ -42,7 +42,7 @@ Restart OpenCode.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `debounceMs` | `number` | `500` | Wait after the last completed todo before showing toast |
+| `debounceMs` | `number` | `500` | Wait after the last completed todo before sending message |
 
 ## How it works
 
@@ -53,14 +53,14 @@ Per-session state is minimal:
 ```
 SessionState
 ├── reviewFired: boolean         ← prevent double-fire
-└── debounceTimer: Timer | null  ← debounce before showing toast
+└── debounceTimer: Timer | null  ← debounce before sending
 ```
 
 ### Event handling
 
 | Event | Action |
 |-------|--------|
-| `todo.updated` | Check all todos. If all completed/cancelled → schedule toast. If any pending → cancel scheduled toast. |
+| `todo.updated` | Check all todos. If all completed/cancelled → schedule message. If any pending → cancel scheduled message. |
 | `session.deleted` / `session.error` / `session.compacted` | Clean up session state |
 
 ### Review trigger flow
@@ -69,25 +69,30 @@ SessionState
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
 4. If all done → 500ms debounce timer starts
-5. Timer fires → shows toast notification: "All todos are complete. Ready for review."
-6. No message sent to chat — notification is a corner toast only
+5. Timer fires → sends message to chat: "All tasks in this session have been completed. Please perform a final review..."
+6. AI responds with a session review summary
 
-### Why toast instead of chat message?
+### How the message appears
 
-- **Non-intrusive:** Appears in the corner, not in the conversation
-- **Brief:** Disappears automatically after a few seconds
-- **No interference:** User's prepared message or work is not disturbed
+Uses `client.session.prompt()` with `synthetic: false` — the same approach as `opencode-todo-reminder`. The message appears as a **normal chat message** that the AI responds to naturally.
+
+## Yin and yang
+
+| Plugin | When it triggers | What it does |
+|--------|-----------------|--------------|
+| `opencode-todo-reminder` | Todos remain incomplete | Nudges to complete tasks |
+| `opencode-auto-review-completed-todos` | All todos complete | Triggers review |
 
 ## Status
 
-**BETA — testing (5 May 2026).**
+**BETA — confirmed working (5 May 2026).**
 
 Plugin:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
-- Shows toast notification when all todos are completed
+- Sends visible chat message when all todos are completed
+- AI responds with a session review summary
 - Debounces to avoid premature triggering
 - Fires only once per session
-- Clean debug-free operation
 
 ## Files
 
@@ -103,7 +108,7 @@ Plugin:
 - Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
 - Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
 
-**Toast not appearing:**
+**Message not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
 - All todos must have status `"completed"` or `"cancelled"`
 - Plugin fires only once per session (new session needed after firing)
