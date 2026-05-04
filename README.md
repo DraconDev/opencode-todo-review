@@ -78,13 +78,18 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 
 ## Status
 
-**BETA — silent mode (5 May 2026).**
+**BETA — confirmed working (5 May 2026).**
 
-Plugin is completely invisible when triggered:
-- No terminal output
-- No chat message
-- No AI review generation
-- Just marks the session as reviewed (fires once per session)
+Plugin is silent in chat but outputs to terminal when triggered:
+- No chat message — completely invisible to user in the conversation
+- Terminal output: `[auto-review] REVIEW TRIGGERED`
+- Fires once per session
+
+Plugin successfully:
+- Detects `todo.updated` events from OpenCode's internal todowrite tool
+- Outputs `[auto-review] REVIEW TRIGGERED` to terminal when all todos are completed
+- Debounces to avoid premature triggering
+- Fires only once per session
 
 ## Files
 
