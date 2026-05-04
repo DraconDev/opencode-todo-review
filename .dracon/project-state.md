@@ -1,23 +1,20 @@
 # Project State
 
 ## Current Focus
-Silent auto-review mode: removed terminal output and chat notifications
+Added debug logging to track when auto-review is triggered
 
 ## Context
-The auto-review plugin now operates completely invisibly. When all todos are completed, it silently marks the session as reviewed without any terminal output or chat messages.
+This change reintroduces debug logging to help track when the auto-review process is initiated, following previous refactoring that removed terminal output. This is useful for debugging the auto-review plugin's behavior.
 
 ## Completed
-- [x] Removed terminal output when all todos are completed
-- [x] Eliminated chat notifications for auto-review triggers
-- [x] Simplified plugin to only mark sessions as reviewed
-- [x] Updated documentation to reflect silent operation
+- [x] Added stderr debug message "[auto-review] REVIEW TRIGGERED" when auto-review is triggered
 
 ## In Progress
-- [ ] Testing silent mode effectiveness
+- [x] Debug logging implementation for auto-review trigger
 
 ## Blockers
-- Need user feedback on whether silent mode is sufficient
+- None identified
 
 ## Next Steps
-1. Monitor silent mode behavior in production
-2. Evaluate whether to reintroduce visible notifications based on feedback
+1. Verify debug messages appear in expected scenarios
+2. Consider adding more detailed debug information if needed

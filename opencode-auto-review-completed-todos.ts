@@ -78,6 +78,8 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
+
+    process.stderr.write("[auto-review] REVIEW TRIGGERED\n");
   }
 
   function scheduleReview(sessionId: string): void {
