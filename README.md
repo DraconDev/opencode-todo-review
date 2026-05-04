@@ -1,6 +1,5 @@
-# opencode-auto-review-completed-todos
-
-Never forget what you accomplished. This OpenCode plugin auto-reviews your session when all todos are done.
+## Goal
+Auto-detect when all session todos are completed and inject a review prompt. Fires once per session.
 
 ## What it does
 
@@ -13,7 +12,7 @@ Never forget what you accomplished. This OpenCode plugin auto-reviews your sessi
 
 ## Install
 
-OpenCode auto-loads TypeScript plugins from `~/.config/opencode/plugins/`. Either file works:
+OpenCode auto-loads plugins from `~/.config/opencode/plugins/`. Copy either the TypeScript source or the compiled JavaScript:
 
 ```bash
 cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
@@ -22,6 +21,7 @@ cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
 Register in `opencode.json` to activate:
+
 ```json
 "plugin": [
   "opencode-auto-review-completed-todos"

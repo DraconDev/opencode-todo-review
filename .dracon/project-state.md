@@ -1,23 +1,22 @@
 # Project State
 
 ## Current Focus
-Enhanced text extraction and review scheduling logic for the auto-review plugin
+docs(readme): updated plugin documentation to clarify its core purpose and installation
 
 ## Context
-The changes improve how the plugin handles text extraction from events and refines the review scheduling logic to better manage edge cases and prevent duplicate reviews.
+The plugin's README was updated to better communicate its functionality and installation process, following recent changes to its debug logging behavior.
 
 ## Completed
-- [x] Added direct text extraction from `event.properties.message.text` and `event.properties.text` paths
-- [x] Removed dependency on `state.hadTodos` check in review scheduling conditions
-- [x] Added explicit cleanup of debounce timers before scheduling reviews
-- [x] Made review triggering non-async in idle session handling
+- [x] clarified the plugin's purpose in the README header
+- [x] updated installation instructions to reflect the plugin's actual loading mechanism
+- [x] simplified the plugin registration example
 
 ## In Progress
-- [ ] No active work in progress
+- [x] documentation updates to reflect current behavior
 
 ## Blockers
 - None identified
 
 ## Next Steps
-1. Verify the new text extraction paths work with all supported event types
-2. Test edge cases where todos might be added after initial empty state detection
+1. Verify the updated documentation works with the current plugin implementation
+2. Consider adding usage examples to the README
