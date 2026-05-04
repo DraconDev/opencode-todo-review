@@ -71,6 +71,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
 
   async function triggerReview(sessionId: string): Promise<void> {
     const state = sessions.get(sessionId);
+    process.stderr.write("[auto-review] triggerReview called, state=" + (state ? "exists" : "null") + ", reviewFired=" + (state?.reviewFired) + "\n");
     if (!state || state.reviewFired) return;
 
     state.reviewFired = true;
@@ -79,6 +80,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
       state.debounceTimer = null;
     }
 
+    process.stderr.write("[auto-review] triggerReview: showing toast\n");
     try {
       await input.client.tui.showToast({
         query: { directory: input.directory },
@@ -95,8 +97,11 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
 
   function scheduleReview(sessionId: string): void {
     const state = sessions.get(sessionId);
-    if (!state) return;
-
+    if (!state) {
+      process.stderr.write("[auto-review] scheduleReview: no state\n");
+      return;
+    }
+    process.stderr.write("[auto-review] scheduleReview called, debounceMs=" + config.debounceMs + "\n");
     if (state.debounceTimer) clearTimeout(state.debounceTimer);
     state.debounceTimer = setTimeout(() => {
       state.debounceTimer = null;
@@ -122,7 +127,11 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
         ((props?.info as Record<string, unknown>)?.id as string) ??
         ((props?.path as Record<string, unknown>)?.id as string);
 
-      if (!sessionId) return;
+      process.stderr.write(`[auto-review] event type=${e.type}, sessionId=${sessionId}\n`);
+      if (!sessionId) {
+        process.stderr.write("[auto-review] no sessionId, returning\n");
+        return;
+      }
 
       if (
         e.type === "session.deleted" ||

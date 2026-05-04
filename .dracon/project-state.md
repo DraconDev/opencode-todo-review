@@ -1,23 +1,24 @@
 # Project State
 
 ## Current Focus
-Added debug logging to track auto-review plugin behavior during todo completion events
+Added debug logging to track auto-review plugin behavior during TODO completion events
 
 ## Context
-The auto-review plugin needs visibility into its execution flow to help debug issues with the review triggering logic. This change adds stderr logging to track when todos are updated, whether they're valid arrays, and whether all todos are completed.
+This change adds detailed debug logging to help track the auto-review plugin's state and execution flow, particularly during TODO completion events. The logging helps diagnose issues with the auto-review triggering mechanism.
 
 ## Completed
-- [x] Added debug logging for todo.updated events
-- [x] Added validation logging for todos array type
-- [x] Added logging for todo completion status
-- [x] Improved type safety with proper type casting
+- [x] Added debug logging in `triggerReview` to track state existence and reviewFired status
+- [x] Added debug logging in `scheduleReview` to track debounce timer behavior
+- [x] Added debug logging in event handler to track event types and session IDs
+- [x] Added debug logging for cases where session state is missing
+- [x] Added debug logging for toast notification display
 
 ## In Progress
-- [ ] None
+- [ ] No active work in progress
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify debug logs provide sufficient visibility
-2. Consider adding more detailed logging if needed
+1. Verify debug logs provide sufficient visibility into plugin behavior
+2. Monitor logs during normal operation to ensure they capture useful information

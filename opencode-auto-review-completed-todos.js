@@ -38,6 +38,7 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
   }
   async function triggerReview(sessionId) {
     const state = sessions.get(sessionId);
+    process.stderr.write("[auto-review] triggerReview called, state=" + (state ? "exists" : "null") + ", reviewFired=" + (state?.reviewFired) + "\n");
     if (!state || state.reviewFired)
       return;
     state.reviewFired = true;
@@ -45,6 +46,7 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
+    process.stderr.write("[auto-review] triggerReview: showing toast\n");
     try {
       await input.client.tui.showToast({
         query: { directory: input.directory },
@@ -60,8 +62,11 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
-    if (!state)
+    if (!state) {
+      process.stderr.write("[auto-review] scheduleReview: no state\n");
       return;
+    }
+    process.stderr.write("[auto-review] scheduleReview called, debounceMs=" + config.debounceMs + "\n");
     if (state.debounceTimer)
       clearTimeout(state.debounceTimer);
     state.debounceTimer = setTimeout(() => {
@@ -79,10 +84,12 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
   return {
     event: async ({ event }) => {
       const e = event;
-      // Extract session ID from various event shapes
       const sessionId = e?.properties?.sessionID ?? e?.properties?.info?.id ?? e?.properties?.path?.id;
-      if (!sessionId)
+      process.stderr.write(`[auto-review] event type=${e?.type}, sessionId=${sessionId}\n`);
+      if (!sessionId) {
+        process.stderr.write("[auto-review] no sessionId, returning\n");
         return;
+      }
       if (e.type === "session.deleted" || e.type === "session.error" || e.type === "session.compacted") {
         cleanupSession(sessionId);
         return;
