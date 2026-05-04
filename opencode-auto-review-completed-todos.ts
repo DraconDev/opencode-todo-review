@@ -133,18 +133,23 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
         return;
       }
 
-      if (e.type === "todo.updated") {
-        const todoEvent = e as unknown as EventTodoUpdated;
-        const todos = todoEvent.properties.todos;
-        if (!Array.isArray(todos)) return;
-
+if (e.type === "todo.updated") {
+        const todos = e?.properties?.todos as Todo[] | undefined;
+        process.stderr.write(`[auto-review] todo.updated event, todos=${JSON.stringify(todos)}\n`);
+        if (!Array.isArray(todos)) {
+          process.stderr.write("[auto-review] todos not an array, returning\n");
+          return;
+        }
         const state = ensureSession(sessionId);
-
-        if (allTodosCompleted(todos)) {
+        const completed = allTodosCompleted(todos);
+        process.stderr.write(`[auto-review] todos count=${todos.length}, allDone=${completed}\n`);
+        if (completed) {
           scheduleReview(sessionId);
         } else {
           cancelScheduledReview(sessionId);
         }
+        return;
+      }
         return;
       }
     },

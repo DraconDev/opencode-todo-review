@@ -89,10 +89,15 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       }
       if (e.type === "todo.updated") {
         const todos = e?.properties?.todos;
-        if (!Array.isArray(todos))
+        process.stderr.write(`[auto-review] todo.updated event, todos=${JSON.stringify(todos)}\n`);
+        if (!Array.isArray(todos)) {
+          process.stderr.write("[auto-review] todos not an array, returning\n");
           return;
+        }
         const state = ensureSession(sessionId);
-        if (allTodosCompleted(todos)) {
+        const completed = allTodosCompleted(todos);
+        process.stderr.write(`[auto-review] todos count=${todos.length}, allDone=${completed}\n`);
+        if (completed) {
           scheduleReview(sessionId);
         } else {
           cancelScheduledReview(sessionId);
