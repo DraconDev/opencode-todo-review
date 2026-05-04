@@ -1,4 +1,5 @@
-## Goal
+# opencode-auto-review-completed-todos
+
 Auto-detect when all session todos are completed and inject a review prompt. Fires once per session.
 
 ## What it does
@@ -32,8 +33,6 @@ Restart OpenCode to load. Two confirmatory lines appear in terminal: `[auto-revi
 
 ## Configuration
 
-The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit entry in `opencode.json`. However, you can override defaults in your config:
-
 ```json
 {
   "plugin": [
@@ -41,7 +40,7 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
       "levenshteinThreshold": 3,
       "debounceMs": 500,
       "bulkPhrases": ["all todos done", "all tasks completed", "all done", "all wrapped up", "everything done"],
-      "reviewPrompt": "All tasks in this session have been completed. Please perform a final review..."
+      "reviewPrompt": "All tasks in this session have been completed..."
     }]
   ]
 }
@@ -52,13 +51,13 @@ The plugin auto-loads from `~/.config/opencode/plugins/` and needs no explicit e
 | `levenshteinThreshold` | `number` | `3` | Max edit distance for fuzzy todo matching. Higher = more lenient. |
 | `debounceMs` | `number` | `500` | Milliseconds to wait after last completion before triggering review. |
 | `bulkPhrases` | `string[]` | See defaults | Phrases that trigger bulk completion. Fuzzy-matched per-sentence. |
-| `reviewPrompt` | `string` | See defaults | The prompt injected when all todos are done. |
+| `reviewPrompt` | `string` | (default message) | The prompt injected when all todos are done. |
 
 ## How it works
 
 ### Architecture
 
-The plugin maintains per-session state:
+Per-session state tracks todos and their sources:
 
 ```
 SessionState
@@ -67,24 +66,8 @@ SessionState
 ├── sourceTodos: Map<sourceKey, string[]>  ← extracted todos per source
 ├── messageParts: Map<msgId, Set<partId>>  ← which parts belong to which message
 ├── reviewFired: boolean
-├── hadTodos: boolean
 └── debounceTimer: Timer | null
 ```
-
-The `messageParts` map tracks which parts belong to which message. When `message.removed` fires, all associated parts are cleaned up. Without this, orphaned parts from deleted messages could leak into the todo set.
-
-### Source tracking
-
-Every text source gets a unique key:
-- Part events: `part:${partId}`
-- Message events: `msg:${messageId}`
-- Orphan events: `orphan:${randomId}`
-
-When a source updates, the plugin diffs its old extracted todos against its new ones. Todos are removed from the canonical set only if they disappeared from this source **and** don't exist in any other source.
-
-### Delta accumulation
-
-`message.part.delta` events append text incrementally. The plugin accumulates text per source so todo patterns spanning multiple delta chunks (e.g. `- [` then ` ] fix bug`) are detected correctly.
 
 ### Event handling
 
@@ -93,87 +76,57 @@ When a source updates, the plugin diffs its old extracted todos against its new 
 | `message.created` / `message.updated` | Extract todos from message text, update source |
 | `message.part.delta` | Accumulate text, update source |
 | `message.part.updated` / `message.part.added` | Replace text, update source |
-| `message.part.removed` | Remove part source, diff todos (don't recreate from other sources) |
+| `message.part.removed` | Remove part source, diff todos |
 | `message.removed` | Remove message source + all its tracked parts, diff todos |
 | `session.idle` | Trigger review if todos empty and not yet fired |
 | `session.error` / `ended` / `deleted` / `compacted` | Clean up session state |
 
-### Todo detection
+### Todo patterns
 
-**Creation patterns (case-insensitive):**
+**Creation (case-insensitive):**
 - `- [ ] task` (checkbox with dash)
 - `[ ] task` (checkbox without dash)
-- `TODO: task` (with colon)
-- `todo: task` (with colon)
-- `todo task` (informal — dash or colon optional)
+- `TODO: task`, `todo: task`, `todo task`
 
-**Completion patterns (case-insensitive, fuzzy-matched):**
-- `- [x] task`
-- `[x] task` (no dash)
-- `DONE: task`
-- `done: task`
-- `completed: task`
-- `fixed: task`
-- `resolved: task`
+**Completion (case-insensitive, fuzzy-matched):**
+- `- [x] task`, `[x] task`
+- `DONE: task`, `done: task`, `completed: task`, `fixed: task`, `resolved: task`
 
 **Bulk completion phrases (fuzzy-matched per-sentence):**
-- "all todos done"
-- "all tasks completed"
-- "all done"
-- "all tasks done"
-- "all wrapped up"
-- "everything done"
-- "everything completed"
+- "all todos done", "all tasks completed", "all done", "all wrapped up", "everything done", "everything completed"
 
-## Example flow
+## Status
 
-```
-User:  "Here are the tasks:
-        - [ ] fix auth bug
-        - [ ] update docs"
+**IN PROGRESS — not yet confirmed working**
 
-Plugin:
-  1. Detects two todos: "fix auth bug", "update docs"
-  2. Sets hadTodos = true
+Plugin implemented and installed but has not been verified to trigger review in a live session.
 
-User:  "done: fix auth bug"
+**Last tested:** Not yet — was blocked on investigation
 
-Plugin:
-  1. Detects "fix auth bug" completed (fuzzy match)
-  2. "update docs" still active → review NOT triggered
+**Known issue:** Plugin may not load correctly (no `[auto-review] PLUGIN LOADED` seen on restart), or text extraction fails to find message text for `message.created` events. Two fixes applied to address both:
 
-User:  "all done"
-
-Plugin:
-  1. Detects bulk completion phrase
-  2. Clears all todos (both were tracked)
-  3. Schedules review in 500ms
-  4. No new todos appear in 500ms window
-  5. Triggers review prompt → AI summarizes session
-```
-
-**Review triggers when:** all tracked todos become empty (no new todos in 500ms debounce window). Can happen via individual completion, bulk phrase, or a mix.
-
-## Requirements
-
-- OpenCode with TypeScript plugin support
-- No additional npm dependencies
+1. Added `event.properties.message.text` and `event.properties.text` paths to `extractTextFromEvent` (previously missing)
+2. Removed `&& state.hadTodos` guard from review trigger — review now fires when todos reach zero regardless of whether todos were ever tracked via text patterns (handles case where no text-based todos were created but user still wants review)
 
 ## Test flow
 
-To verify the plugin works:
-
-1. **Restart OpenCode** to load the plugin (plugins load at startup, existing sessions won't pick up changes)
+1. **Restart OpenCode** — plugins load at startup; existing sessions won't pick up changes
 2. Create todos **in message text**: `Here are my tasks: - [ ] fix bug - [ ] update docs`
 3. Complete them **via message text**: `done: fix bug` then `all done`
-4. Watch for the review prompt when all todos complete
+4. Watch for `[auto-review] REVIEW TRIGGERED` in terminal when all todos complete
 
-**Important:** The plugin detects todos by watching message text for patterns like `- [ ]`, `todo:`, `todo <text>`, `done:`. It does NOT hook into OpenCode's internal todowrite tool. Completing todos via the `[✓]` checkbox UI will NOT trigger review — you must complete them via message text.
+**Important:** The plugin watches message text only — it does NOT hook into OpenCode's internal todowrite tool. Todo completions via the `[✓]` checkbox UI will NOT trigger review.
 
-## Runtime Confirmation
+## Files
 
-The plugin outputs two confirmatory messages to terminal stderr:
-- `[auto-review] PLUGIN LOADED` — on startup
-- `[auto-review] REVIEW TRIGGERED` — when review prompt is injected
+| Path | Description |
+|------|-------------|
+| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
+| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.ts` | TypeScript source (clean, synced with .js) |
+| `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source, synced with plugins folder |
+| `~/.config/opencode/opencode.json` | Plugin registered as bare string at line 121 |
 
-These appear only in your terminal (not in OpenCode UI).
+## Requirements
+
+- OpenCode with plugin support
+- No additional npm dependencies

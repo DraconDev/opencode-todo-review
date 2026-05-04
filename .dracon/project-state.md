@@ -1,22 +1,29 @@
 # Project State
 
 ## Current Focus
-docs(readme): updated plugin documentation to clarify its core purpose and installation
+Updated plugin documentation to clarify its core purpose and behavior
 
 ## Context
-The plugin's README was updated to better communicate its functionality and installation process, following recent changes to its debug logging behavior.
+The README was heavily revised to better document the plugin's functionality, limitations, and testing procedures. The changes reflect recent implementation work and debugging efforts.
 
 ## Completed
-- [x] clarified the plugin's purpose in the README header
-- [x] updated installation instructions to reflect the plugin's actual loading mechanism
-- [x] simplified the plugin registration example
+- [x] Updated plugin title to "opencode-auto-review-completed-todos"
+- [x] Simplified configuration documentation by removing redundant notes
+- [x] Clarified that the plugin only watches message text (not checkbox UI)
+- [x] Added explicit status section marking plugin as "IN PROGRESS"
+- [x] Documented known issues with plugin loading and text extraction
+- [x] Added files table showing plugin installation locations
+- [x] Updated test flow to include expected terminal output
+- [x] Removed outdated requirements section (now in root README)
 
 ## In Progress
-- [x] documentation updates to reflect current behavior
+- [ ] Verification of plugin functionality in live sessions
 
 ## Blockers
-- None identified
+- Plugin has not been confirmed to trigger review in a live session
+- Text extraction may fail for `message.created` events
 
 ## Next Steps
-1. Verify the updated documentation works with the current plugin implementation
-2. Consider adding usage examples to the README
+1. Test plugin in a live session to verify review triggering
+2. Address any issues with text extraction for `message.created` events
+3. Confirm plugin loads correctly (check for `[auto-review] PLUGIN LOADED` message)
