@@ -1,21 +1,20 @@
 # Project State
 
 ## Current Focus
-docs(readme): updated auto-review plugin documentation to clarify its terminal-only behavior
+docs(readme): added testing note for terminal-only auto-review mode
 
 ## Context
-The auto-review plugin was refactored to simplify its functionality, removing chat prompts and AI review generation. This change was made to reduce complexity and focus on core functionality.
+The auto-review plugin is being simplified by removing chat notifications. This change documents the current testing phase for the terminal-only mode.
 
 ## Completed
-- [x] Updated documentation to reflect the terminal-only notification approach
-- [x] Clarified that the plugin outputs `[auto-review] REVIEW TRIGGERED` to terminal when all todos are complete
+- [x] Added note in README.md clarifying that terminal-only mode is being tested
 
 ## In Progress
-- [ ] No active work in progress
+- [x] Evaluating whether chat notifications are needed for the auto-review plugin
 
 ## Blockers
-- None
+- User decision needed: whether to keep or remove chat notifications
 
 ## Next Steps
-1. Verify the simplified behavior meets core requirements
-2. Consider adding more detailed terminal output for debugging purposes
+1. Complete evaluation of terminal-only mode effectiveness
+2. Decide whether to reintroduce chat notifications or finalize terminal-only mode

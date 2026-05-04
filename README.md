@@ -70,6 +70,8 @@ SessionState
 5. Timer fires → outputs `[auto-review] REVIEW TRIGGERED` to terminal
 6. No message sent to chat — the notification is terminal-only
 
+**Currently testing:** Option C (terminal-only). Will evaluate whether this is sufficient or if chat notification is needed.
+
 ### Why not text parsing?
 
 The old version tried to regex-parse user messages for patterns like `- [ ]`, `TODO:`, `all done`. This was fragile, missed todos created via the internal todowrite tool, and required fuzzy matching and source tracking. The new approach hooks directly into OpenCode's todo event system — the **same** system the AI and UI use.
