@@ -50,11 +50,10 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       await input.client.session.prompt({
         path: { id: sessionId },
         body: {
-          system: config.reviewPrompt,
           parts: [
             {
               type: "text",
-              text: " ",
+              text: config.reviewPrompt,
               synthetic: true
             }
           ]

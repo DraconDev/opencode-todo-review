@@ -1,24 +1,22 @@
 # Project State
 
 ## Current Focus
-Improved documentation for the auto-review plugin's invisible system prompt injection
+Refactored auto-review plugin to simplify system prompt handling
 
 ## Context
-The plugin now uses OpenCode's `system` field to inject review prompts invisibly, replacing the previous visible message approach. This change required updating documentation to clarify the technical implementation and troubleshooting steps.
+The previous implementation had redundant system prompt configuration. This change consolidates the prompt configuration for better maintainability.
 
 ## Completed
-- [x] Added detailed explanation of the `system` field approach
-- [x] Updated configuration table to reflect the system prompt usage
-- [x] Added troubleshooting section for common issues
-- [x] Clarified plugin requirements and loading instructions
+- [x] Removed duplicate system prompt configuration
+- [x] Consolidated review prompt into a single text field
 
 ## In Progress
-- [ ] No active work in progress
+- [x] No active work in progress
 
 ## Blockers
-- None - documentation is complete
+- None
 
 ## Next Steps
-1. Verify plugin works with latest OpenCode version
-2. Test with different todo creation methods
-3. Monitor for any unexpected behavior with the system field approach
+1. Verify the consolidated prompt works as expected
+2. Update related documentation if needed
+```
