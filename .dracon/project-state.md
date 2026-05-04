@@ -1,23 +1,22 @@
 # Project State
 
 ## Current Focus
-Updated documentation to clarify the auto-review plugin's behavior and configuration.
+Simplified the auto-review plugin by removing the review prompt logic
 
 ## Context
-The plugin now sends a visible review prompt to the chat instead of using an invisible system prompt. This change makes the behavior more transparent to users while maintaining the same core functionality.
+This change was prompted by ongoing refactoring efforts to simplify the auto-review plugin's behavior. The previous implementation included a complex review prompt system that was being removed in favor of a more streamlined approach.
 
 ## Completed
-- [x] Updated README to describe the review prompt as a visible chat message
-- [x] Simplified the review trigger flow documentation
-- [x] Removed outdated implementation details about system prompts
-- [x] Clarified the debounce behavior in the configuration table
+- [x] Removed the review prompt logic from both JavaScript and TypeScript implementations
+- [x] Kept the debug logging output for review triggering
+- [x] Maintained the same session state management functionality
 
 ## In Progress
-- [ ] No active work in progress
+- [x] The refactoring of the auto-review plugin's core functionality
 
 ## Blockers
-- None identified
+- None identified in this change
 
 ## Next Steps
-1. Verify the plugin's behavior with the new documentation
-2. Test the visible review prompt in different OpenCode versions
+1. Continue with the ongoing refactoring of the auto-review plugin's core functionality
+2. Update documentation to reflect the simplified behavior

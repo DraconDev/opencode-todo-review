@@ -45,23 +45,7 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    try {
-      process.stderr.write("[auto-review] REVIEW TRIGGERED\n");
-      await input.client.session.prompt({
-        path: { id: sessionId },
-        body: {
-          parts: [
-            {
-              type: "text",
-              text: config.reviewPrompt,
-              synthetic: true
-            }
-          ]
-        }
-      });
-    } catch (e) {
-      state.reviewFired = false;
-    }
+    process.stderr.write("[auto-review] REVIEW TRIGGERED\n");
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
