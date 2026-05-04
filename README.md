@@ -1,6 +1,16 @@
 # opencode-auto-review-completed-todos
 
+> **Topic:** OpenCode Plugins · **Tags:** todo, review, productivity, automation
+
 Auto-detect when all session todos are completed and send a review message. Fires once per session.
+
+**Site:** [dracon.uk](https://dracon.uk)
+
+## About
+
+`opencode-auto-review-completed-todos` is an OpenCode plugin that automatically triggers a session review when all tasks are completed. It listens for OpenCode's internal `todo.updated` events — the same system used by the AI and UI — and sends a visible chat message prompting the AI to summarize the session.
+
+Designed as the yin to [`opencode-todo-reminder`](https://www.npmjs.com/package/opencode-todo-reminder)'s yang: where todo-reminder nudges when tasks remain incomplete, this plugin triggers a review when all tasks are done.
 
 ## What it does
 
