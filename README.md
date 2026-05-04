@@ -76,7 +76,9 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 
 ## Status
 
-**BETA — confirmed working (5 May 2026).**
+**BETA — testing option C (5 May 2026).**
+
+Current approach: terminal-only notification. No chat message, no AI review generation. When all todos complete, outputs `[auto-review] REVIEW TRIGGERED` to terminal.
 
 Plugin successfully:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
