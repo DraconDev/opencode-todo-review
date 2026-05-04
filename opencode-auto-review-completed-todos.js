@@ -114,8 +114,7 @@ function extractTodos(text) {
   return todos;
 }
 var AutoReviewCompletedTodosPlugin = async (input, options) => {
-  const trace = (...args) => console.error("[auto-review] " + args.join(" "));
-  trace("PLUGIN LOADED");
+  console.error("[auto-review] PLUGIN LOADED");
   const rawOptions = typeof options === "object" && options !== null ? options : {};
   const config = {
     levenshteinThreshold: Math.max(0, Math.min(10, rawOptions.levenshteinThreshold ?? DEFAULT_OPTIONS.levenshteinThreshold)),
@@ -157,7 +156,7 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    trace("REVIEW TRIGGERED");
+    console.error("[auto-review] REVIEW TRIGGERED");
     try {
       await input.client.session.prompt({
         body: {
@@ -246,12 +245,12 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   }
   function applySourceDiff(state, sourceKey, newTodos) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
-    const added = newTodos.filter(t => !oldTodos.includes(t));
-    const removed = oldTodos.filter(t => !newTodos.includes(t) && !todoExistsInOtherSources(state, sourceKey, t));
-    for (const oldTodo of removed) {
-      state.todos.delete(oldTodo);
+    for (const oldTodo of oldTodos) {
+      if (!newTodos.includes(oldTodo) && !todoExistsInOtherSources(state, sourceKey, oldTodo)) {
+        state.todos.delete(oldTodo);
+      }
     }
-    for (const newTodo of added) {
+    for (const newTodo of newTodos) {
       if (!isDuplicateTodo(newTodo, state.todos)) {
         state.todos.add(newTodo);
       }
@@ -260,9 +259,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
       state.hadTodos = true;
     }
     state.sourceTodos.set(sourceKey, newTodos);
-    if (added.length > 0) trace(`REGISTERED: [${added.join(", ")}]`);
-    if (removed.length > 0 && state.todos.size === 0) trace(`ALL CLEAR - scheduling review`);
-    if (state.hadTodos && state.todos.size === 0) trace(`checkAndScheduleReview: todos=0, hadTodos=true, firing=${!state.reviewFired}`);
   }
   function removeSource(state, sourceKey) {
     const oldTodos = state.sourceTodos.get(sourceKey) || [];
@@ -293,20 +289,16 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
     }
     const matchedPhrase = findMatchingBulkPhrase(text, config.bulkPhrases);
     if (matchedPhrase) {
-      trace(`BULK COMPLETE:"${matchedPhrase}" clearing ${state.todos.size} todos`);
       state.todos.clear();
       state.textSources.clear();
       state.sourceTodos.clear();
       state.messageParts.clear();
-      trace(`checkAndScheduleReview: after bulk clear - todos=${state.todos.size}, hadTodos=${state.hadTodos}, fired=${state.reviewFired}`);
       return;
     }
   }
   function checkAndScheduleReview(sessionId) {
     const state = getSession(sessionId);
-    trace(`checkAndScheduleReview: session=${sessionId}, todos=${state?.todos?.size}, hadTodos=${state?.hadTodos}, fired=${state?.reviewFired}`);
     if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
-      trace(`checkAndScheduleReview: CALLING scheduleReview`);
       scheduleReview(sessionId);
     }
   }
@@ -319,7 +311,6 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
   return {
     event: async ({ event }) => {
       const e = event;
-      trace(`EVENT:${event?.type} sessionId:${e?.properties?.sessionID || e?.properties?.part?.sessionID || "unknown"}`);
       let sessionId = e?.properties?.sessionID ?? e?.properties?.part?.sessionID;
       if (!sessionId) {
         const msgId2 = getMessageId(e);
@@ -330,12 +321,10 @@ var AutoReviewCompletedTodosPlugin = async (input, options) => {
         }
       }
       if (event?.type === "session.created") {
-        trace(`session.created - cleanup ${sessionId}`);
         cleanupSession(sessionId);
         return;
       }
       if (event?.type === "session.error") {
-        trace(`session.error - cleanup ${sessionId}`);
         cleanupSession(sessionId);
         return;
       }
