@@ -45,7 +45,18 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    process.stderr.write("[auto-review] REVIEW TRIGGERED\n");
+    try {
+      await input.client.tui.showToast({
+        query: { directory: input.directory },
+        body: {
+          title: "Review Triggered",
+          message: "All todos are complete. Ready for review.",
+          variant: "info"
+        }
+      });
+    } catch (e) {
+      process.stderr.write("[auto-review] REVIEW TRIGGERED (toast failed)\n");
+    }
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
@@ -65,7 +76,18 @@ export default async function AutoReviewCompletedTodosPlugin(input, rawOptions) 
       state.debounceTimer = null;
     }
   }
-  process.stderr.write("[auto-review] PLUGIN LOADED\n");
+  try {
+    await input.client.tui.showToast({
+      query: { directory: input.directory },
+      body: {
+        title: "Auto Review Plugin",
+        message: "Plugin loaded successfully",
+        variant: "success"
+      }
+    });
+  } catch (e) {
+    process.stderr.write("[auto-review] PLUGIN LOADED\n");
+  }
   return {
     event: async ({ event }) => {
       const e = event;

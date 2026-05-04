@@ -79,7 +79,18 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
       state.debounceTimer = null;
     }
 
-    process.stderr.write("[auto-review] REVIEW TRIGGERED\n");
+    try {
+      await input.client.tui.showToast({
+        query: { directory: input.directory },
+        body: {
+          title: "Review Triggered",
+          message: "All todos are complete. Ready for review.",
+          variant: "info",
+        },
+      });
+    } catch {
+      process.stderr.write("[auto-review] REVIEW TRIGGERED (toast failed)\n");
+    }
   }
 
   function scheduleReview(sessionId: string): void {
@@ -101,7 +112,18 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
     }
   }
 
-  process.stderr.write("[auto-review] PLUGIN LOADED\n");
+  try {
+    await input.client.tui.showToast({
+      query: { directory: input.directory },
+      body: {
+        title: "Auto Review Plugin",
+        message: "Plugin loaded successfully",
+        variant: "success",
+      },
+    });
+  } catch {
+    process.stderr.write("[auto-review] PLUGIN LOADED\n");
+  }
 
   return {
     event: async ({ event }) => {
