@@ -1,15 +1,16 @@
 # Project State
 
 ## Current Focus
-Removed debug logging from the auto-review plugin to simplify the codebase
+Simplified documentation for the auto-review plugin to focus on non-intrusive toast notifications.
 
 ## Context
-The auto-review plugin was previously generating verbose debug logs to stderr, which was replaced with user-facing toast notifications. These logs were primarily used for development and debugging, but now that the functionality is stable, they can be removed to reduce noise.
+The plugin was previously documented as having terminal and chat notifications, but the current implementation only shows toast notifications. This update clarifies the behavior to avoid user confusion.
 
 ## Completed
-- [x] Removed all debug logging statements from the auto-review plugin
-- [x] Simplified the code by removing unnecessary logging infrastructure
-- [x] Maintained the same core functionality while reducing operational noise
+- [x] Removed outdated documentation about terminal and chat notifications
+- [x] Simplified design philosophy to emphasize non-intrusive toast notifications
+- [x] Updated status section to focus on toast behavior
+- [x] Clarified troubleshooting steps for toast notifications
 
 ## In Progress
 - [ ] No active work in progress
@@ -18,5 +19,5 @@ The auto-review plugin was previously generating verbose debug logs to stderr, w
 - None
 
 ## Next Steps
-1. Verify the plugin still works as expected without the debug logs
-2. Update documentation to reflect the silent operation mode
+1. Verify plugin behavior matches updated documentation
+2. Consider adding visual examples of toast notifications in the docs

@@ -8,7 +8,7 @@ Listens for OpenCode's internal `todo.updated` events — whenever the todowrite
 
 This works with **any** todo source: the AI creating/checking todos via the todowrite tool, the user checking boxes in the UI, or the internal todo-reminder plugin.
 
-**Design philosophy:** Non-intrusive notification. A brief toast appears in the corner — not in the chat conversation. The user can continue their work or choose to trigger a review manually.
+**Design philosophy:** Non-intrusive. A brief toast appears in the corner — not in the chat conversation. No debug output, no flooding.
 
 ## Install
 
@@ -26,7 +26,7 @@ Register in `opencode.json`:
 ]
 ```
 
-Restart OpenCode. A toast confirms: "Plugin loaded successfully".
+Restart OpenCode.
 
 ## Configuration
 
@@ -77,23 +77,17 @@ SessionState
 - **Non-intrusive:** Appears in the corner, not in the conversation
 - **Brief:** Disappears automatically after a few seconds
 - **No interference:** User's prepared message or work is not disturbed
-- **Fallback:** If toast fails, falls back to `stderr` output
-
-### Why not text parsing?
-
-The old version tried to regex-parse user messages for patterns like `- [ ]`, `TODO:`, `all done`. This was fragile, missed todos created via the internal todowrite tool, and required fuzzy matching and source tracking. The new approach hooks directly into OpenCode's todo event system — the **same** system the AI and UI use.
 
 ## Status
 
-**BETA — testing toast notifications (5 May 2026).**
+**BETA — testing (5 May 2026).**
 
-Current approach: Toast notification in the corner. No chat message. When all todos complete, shows a brief toast.
-
-Plugin successfully:
+Plugin:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
 - Shows toast notification when all todos are completed
 - Debounces to avoid premature triggering
 - Fires only once per session
+- Clean debug-free operation
 
 ## Files
 
@@ -106,14 +100,13 @@ Plugin successfully:
 ## Troubleshooting
 
 **Plugin not loading:**
-- Check for "Plugin loaded successfully" toast on OpenCode startup
 - Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
 - Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
 
-**Review not triggering:**
+**Toast not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
 - All todos must have status `"completed"` or `"cancelled"`
-- Plugin fires only once per session
+- Plugin fires only once per session (new session needed after firing)
 
 ## Requirements
 
