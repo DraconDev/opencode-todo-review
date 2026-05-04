@@ -1,0 +1,31 @@
+{
+  "name": "opencode-auto-review-completed-todos",
+  "version": "1.0.0",
+  "description": "Auto-detect when all session todos are completed and trigger a review. Yin to opencode-todo-reminder's yang.",
+  "type": "module",
+  "main": "opencode-auto-review-completed-todos.js",
+  "types": "opencode-auto-review-completed-todos.ts",
+  "files": [
+    "opencode-auto-review-completed-todos.js",
+    "opencode-auto-review-completed-todos.ts",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.0.0",
+    "@opencode-ai/sdk": ">=1.0.0"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "todo",
+    "review",
+    "productivity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DraconDev/opencode-auto-review-completed-todos"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
