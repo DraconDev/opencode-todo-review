@@ -1,12 +1,14 @@
 # opencode-auto-review-completed-todos
 
-Auto-detect when all session todos are completed and trigger a review. Fires once per session.
+Auto-detect when all session todos are completed. Fires once per session.
 
 ## What it does
 
-Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it outputs `[auto-review] REVIEW TRIGGERED` to the terminal. If new pending todos appear before the debounce fires, the review is cancelled.
+Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it silently marks the session as reviewed. If new pending todos appear before the debounce fires, the review is cancelled.
 
 This works with **any** todo source: the AI creating/checking todos via the todowrite tool, the user checking boxes in the UI, or the internal todo-reminder plugin.
+
+**Design philosophy:** Silent and invisible. No terminal output, no chat message, no AI review generation. The user can continue their work uninterrupted, or choose to trigger a review manually.
 
 ## Install
 
@@ -40,7 +42,7 @@ Restart OpenCode. Confirm: `[auto-review] PLUGIN LOADED` in terminal.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `debounceMs` | `number` | `500` | Wait after the last completed todo before triggering review |
+| `debounceMs` | `number` | `500` | Wait after the last completed todo before marking review complete |
 
 ## How it works
 
@@ -51,7 +53,7 @@ Per-session state is minimal:
 ```
 SessionState
 ├── reviewFired: boolean         ← prevent double-fire
-└── debounceTimer: Timer | null  ← debounce before injecting
+└── debounceTimer: Timer | null  ← debounce before marking complete
 ```
 
 ### Event handling
@@ -67,10 +69,8 @@ SessionState
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
 4. If all done → 500ms debounce timer starts
-5. Timer fires → outputs `[auto-review] REVIEW TRIGGERED` to terminal
-6. No message sent to chat — the notification is terminal-only
-
-**Currently testing:** Option C (terminal-only). Will evaluate whether this is sufficient or if chat notification is needed.
+5. Timer fires → silently sets `reviewFired = true`, clears timer
+6. Nothing appears in chat or terminal — completely invisible
 
 ### Why not text parsing?
 
@@ -78,15 +78,13 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 
 ## Status
 
-**BETA — testing option C (5 May 2026).**
+**BETA — silent mode (5 May 2026).**
 
-Current approach: terminal-only notification. No chat message, no AI review generation. When all todos complete, outputs `[auto-review] REVIEW TRIGGERED` to terminal.
-
-Plugin successfully:
-- Detects `todo.updated` events from OpenCode's internal todowrite tool
-- Outputs `[auto-review] REVIEW TRIGGERED` to terminal when all todos are completed
-- Debounces to avoid premature triggering
-- Fires only once per session
+Plugin is completely invisible when triggered:
+- No terminal output
+- No chat message
+- No AI review generation
+- Just marks the session as reviewed (fires once per session)
 
 ## Files
 

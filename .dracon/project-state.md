@@ -1,20 +1,23 @@
 # Project State
 
 ## Current Focus
-Removed debug logging from the auto-review plugin
+Silent auto-review mode: removed terminal output and chat notifications
 
 ## Context
-The auto-review plugin was simplified by removing complex debug logging that was previously writing to stderr. This change aligns with ongoing efforts to streamline the plugin's behavior and reduce unnecessary output.
+The auto-review plugin now operates completely invisibly. When all todos are completed, it silently marks the session as reviewed without any terminal output or chat messages.
 
 ## Completed
-- [x] Removed stderr debug message "[auto-review] REVIEW TRIGGERED" from both JavaScript and TypeScript implementations
+- [x] Removed terminal output when all todos are completed
+- [x] Eliminated chat notifications for auto-review triggers
+- [x] Simplified plugin to only mark sessions as reviewed
+- [x] Updated documentation to reflect silent operation
 
 ## In Progress
-- [x] Ongoing simplification of the auto-review plugin's logging and behavior
+- [ ] Testing silent mode effectiveness
 
 ## Blockers
-- None identified
+- Need user feedback on whether silent mode is sufficient
 
 ## Next Steps
-1. Verify the auto-review plugin continues to function correctly without the debug output
-2. Continue reviewing and simplifying other aspects of the plugin's behavior
+1. Monitor silent mode behavior in production
+2. Evaluate whether to reintroduce visible notifications based on feedback
