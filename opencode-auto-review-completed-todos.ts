@@ -73,16 +73,21 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
     }
 
     try {
-      await input.client.tui.showToast({
+      await input.client.session.prompt({
+        path: { id: sessionId },
         query: { directory: input.directory },
         body: {
-          title: "Review Triggered",
-          message: "All todos are complete. Ready for review.",
-          variant: "info",
+          parts: [
+            {
+              type: "text" as const,
+              text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
+              synthetic: false,
+            },
+          ],
         },
       });
     } catch {
-      process.stderr.write("[auto-review] REVIEW TRIGGERED (toast failed)\n");
+      process.stderr.write("[auto-review] REVIEW TRIGGERED (prompt failed)\n");
     }
   }
 
