@@ -270,6 +270,16 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
       return partDelta.text;
     }
 
+    const directMsgText = event?.properties?.message?.text;
+    if (directMsgText && typeof directMsgText === "string") {
+      return directMsgText;
+    }
+
+    const directText = event?.properties?.text;
+    if (directText && typeof directText === "string") {
+      return directText;
+    }
+
     const parts =
       event?.properties?.parts ??
       event?.properties?.message?.parts ??
@@ -404,7 +414,11 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
 
   function checkAndScheduleReview(sessionId: string) {
     const state = getSession(sessionId);
-    if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
+    if (state && state.todos.size === 0 && !state.reviewFired) {
+      if (state.debounceTimer) {
+        clearTimeout(state.debounceTimer);
+        state.debounceTimer = null;
+      }
       scheduleReview(sessionId);
     }
   }
@@ -455,12 +469,12 @@ export const AutoReviewCompletedTodosPlugin: Plugin = async (input, options) => 
 
       if (event?.type === "session.idle") {
         const state = getSession(sessionId);
-        if (state && state.todos.size === 0 && !state.reviewFired && state.hadTodos) {
+        if (state && state.todos.size === 0 && !state.reviewFired) {
           if (state.debounceTimer) {
             clearTimeout(state.debounceTimer);
             state.debounceTimer = null;
           }
-          await triggerReview(sessionId);
+          triggerReview(sessionId);
         }
         return;
       }

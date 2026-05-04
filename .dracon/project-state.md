@@ -1,20 +1,23 @@
 # Project State
 
 ## Current Focus
-Updated plugin documentation to reflect the new debug logging behavior.
+Enhanced text extraction and review scheduling logic for the auto-review plugin
 
 ## Context
-The auto-review plugin previously had silent operation, but recent changes added explicit debug logging to stderr. This documentation update ensures users understand the new behavior.
+The changes improve how the plugin handles text extraction from events and refines the review scheduling logic to better manage edge cases and prevent duplicate reviews.
 
 ## Completed
-- [x] Updated README to document the new debug logging output (`[auto-review] PLUGIN LOADED` and `[auto-review] REVIEW TRIGGERED`)
+- [x] Added direct text extraction from `event.properties.message.text` and `event.properties.text` paths
+- [x] Removed dependency on `state.hadTodos` check in review scheduling conditions
+- [x] Added explicit cleanup of debounce timers before scheduling reviews
+- [x] Made review triggering non-async in idle session handling
 
 ## In Progress
-- [x] Documentation update complete
+- [ ] No active work in progress
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify the debug logging works as documented in the README
-2. Consider adding more detailed debug logging options in future updates
+1. Verify the new text extraction paths work with all supported event types
+2. Test edge cases where todos might be added after initial empty state detection
