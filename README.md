@@ -172,8 +172,12 @@ To verify the plugin works:
 
 ## Runtime Confirmation
 
-The plugin outputs two confirmatory messages to terminal stderr:
-- `[auto-review] PLUGIN LOADED` — on startup
-- `[auto-review] REVIEW TRIGGERED` — when review prompt is injected
+The plugin outputs trace messages to terminal stderr. Look for `[auto-review]` prefixed lines:
+- `PLUGIN LOADED` — on startup
+- `EVENT:<type> sessionId:<id>` — every event received
+- `REGISTERED: [<tasks>]` — todos extracted from message text
+- `ALL CLEAR - scheduling review` — todos emptied, review queued
+- `checkAndScheduleReview: CALLING scheduleReview` — review about to fire
+- `REVIEW TRIGGERED` — review prompt injected
 
-These appear in your terminal only (not in OpenCode UI). They confirm the plugin initialized and review fired.
+These appear only in your terminal, not in OpenCode UI.
