@@ -28,7 +28,7 @@ Register in `opencode.json` to activate:
 ]
 ```
 
-Restart OpenCode to load. Plugin runs silently — no console output.
+Restart OpenCode to load. Two confirmatory lines appear in terminal: `[auto-review] PLUGIN LOADED` and `[auto-review] REVIEW TRIGGERED`.
 
 ## Configuration
 

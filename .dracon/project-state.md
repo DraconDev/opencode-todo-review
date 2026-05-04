@@ -1,21 +1,20 @@
 # Project State
 
 ## Current Focus
-Simplified debug logging output in the auto-review plugin
+Updated plugin documentation to reflect the new debug logging behavior.
 
 ## Context
-The plugin previously output verbose debug messages to stderr, which were useful during development but cluttered the terminal. This change reduces the noise while maintaining essential startup and review-triggered confirmation messages.
+The auto-review plugin previously had silent operation, but recent changes added explicit debug logging to stderr. This documentation update ensures users understand the new behavior.
 
 ## Completed
-- [x] Reduced debug logging to only two key messages: plugin load and review trigger
-- [x] Clarified that messages appear only in terminal (not OpenCode UI)
+- [x] Updated README to document the new debug logging output (`[auto-review] PLUGIN LOADED` and `[auto-review] REVIEW TRIGGERED`)
 
 ## In Progress
-- [x] Documentation update to reflect simplified logging
+- [x] Documentation update complete
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify the simplified logging meets user needs
-2. Consider adding a verbose mode for advanced debugging if needed
+1. Verify the debug logging works as documented in the README
+2. Consider adding more detailed debug logging options in future updates
