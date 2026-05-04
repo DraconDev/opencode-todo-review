@@ -1,12 +1,14 @@
 # opencode-auto-review-completed-todos
 
-Auto-detect when all session todos are completed and inject a review prompt. Fires once per session.
+Auto-detect when all session todos are completed and trigger an invisible review. Fires once per session.
 
 ## What it does
 
-Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it schedules a review prompt injection. If new pending todos appear before the debounce fires, the review is cancelled.
+Listens for OpenCode's internal `todo.updated` events — whenever the todowrite tool creates, updates, or completes todos. When all todos have status `completed` or `cancelled`, it injects a review **via the LLM system prompt** (invisible to the user). If new pending todos appear before the debounce fires, the review is cancelled.
 
 This works with **any** todo source: the AI creating/checking todos via the todowrite tool, the user checking boxes in the UI, or the internal todo-reminder plugin.
+
+**Key difference from other plugins:** The review prompt is injected as a `system` message, so the AI performs the review without showing the raw prompt text in the chat UI.
 
 ## Install
 
@@ -42,7 +44,7 @@ Restart OpenCode. Confirm: `[auto-review] PLUGIN LOADED` in terminal.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `debounceMs` | `number` | `500` | Wait after the last completed todo before triggering review |
-| `reviewPrompt` | `string` | (default message) | Prompt injected when all todos are done |
+| `reviewPrompt` | `string` | (default message) | System prompt sent to LLM when all todos are done |
 
 ## How it works
 
@@ -63,6 +65,23 @@ SessionState
 | `todo.updated` | Check all todos. If all completed/cancelled → schedule review. If any pending → cancel scheduled review. |
 | `session.deleted` / `session.error` / `session.compacted` | Clean up session state |
 
+### Invisible review injection
+
+Instead of sending the review prompt as a visible message:
+
+```javascript
+// ❌ Old way — visible in chat
+parts: [{ type: "text", text: "All tasks completed...", synthetic: true }]
+
+// ✅ New way — invisible system prompt
+body: {
+  system: config.reviewPrompt,        // ← LLM sees this, user doesn't
+  parts: [{ type: "text", text: " ", synthetic: true }]  // ← minimal trigger
+}
+```
+
+The `system` field sets the LLM's system context. The AI generates a review response based on these instructions without exposing the raw prompt text in the chat UI.
+
 ### Todo status detection
 
 The `todo.updated` event carries the full todo list with each item having:
@@ -79,7 +98,12 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 
 ## Status
 
-**ALPHA — refactored to use `todo.updated` event (5 May 2026). Install and test.**
+**BETA — confirmed working (5 May 2026).** 
+
+Plugin successfully:
+- Detects `todo.updated` events from OpenCode's internal todowrite tool
+- Triggers review when all todos are completed
+- Uses `system` field for invisible prompt injection
 
 ## Files
 
@@ -88,6 +112,22 @@ The old version tried to regex-parse user messages for patterns like `- [ ]`, `T
 | `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
 | `~/.config/opencode/plugins/opencode-auto-review-completed-todos.ts` | TypeScript source |
 | `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source |
+
+## Troubleshooting
+
+**Plugin not loading:**
+- Check terminal for `[auto-review] PLUGIN LOADED` on OpenCode startup
+- Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
+- Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
+
+**Review not triggering:**
+- Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
+- All todos must have status `"completed"` or `"cancelled"`
+- Plugin fires only once per session
+
+**Review text visible in chat:**
+- This should not happen with the `system` field approach
+- If it does, the `system` field may not be supported by your OpenCode version
 
 ## Requirements
 
