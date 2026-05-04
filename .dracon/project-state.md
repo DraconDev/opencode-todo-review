@@ -1,20 +1,20 @@
 # Project State
 
 ## Current Focus
-docs(readme): added testing note for terminal-only auto-review mode
+Removed debug logging from the auto-review plugin
 
 ## Context
-The auto-review plugin is being simplified by removing chat notifications. This change documents the current testing phase for the terminal-only mode.
+The auto-review plugin was simplified by removing complex debug logging that was previously writing to stderr. This change aligns with ongoing efforts to streamline the plugin's behavior and reduce unnecessary output.
 
 ## Completed
-- [x] Added note in README.md clarifying that terminal-only mode is being tested
+- [x] Removed stderr debug message "[auto-review] REVIEW TRIGGERED" from both JavaScript and TypeScript implementations
 
 ## In Progress
-- [x] Evaluating whether chat notifications are needed for the auto-review plugin
+- [x] Ongoing simplification of the auto-review plugin's logging and behavior
 
 ## Blockers
-- User decision needed: whether to keep or remove chat notifications
+- None identified
 
 ## Next Steps
-1. Complete evaluation of terminal-only mode effectiveness
-2. Decide whether to reintroduce chat notifications or finalize terminal-only mode
+1. Verify the auto-review plugin continues to function correctly without the debug output
+2. Continue reviewing and simplifying other aspects of the plugin's behavior
