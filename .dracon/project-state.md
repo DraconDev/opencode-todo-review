@@ -1,20 +1,21 @@
 # Project State
 
 ## Current Focus
-Added debug logging to track when auto-review is triggered
+Updated documentation to clarify the auto-review plugin's terminal-only notification behavior.
 
 ## Context
-This change reintroduces debug logging to help track when the auto-review process is initiated, following previous refactoring that removed terminal output. This is useful for debugging the auto-review plugin's behavior.
+The auto-review plugin was previously silent, but now needs clearer documentation about its terminal output when triggered.
 
 ## Completed
-- [x] Added stderr debug message "[auto-review] REVIEW TRIGGERED" when auto-review is triggered
+- [x] Updated README.md to document that auto-review triggers terminal output (`[auto-review] REVIEW TRIGGERED`) but no chat message
+- [x] Clarified the distinction between terminal notifications and chat messages in the documentation
 
 ## In Progress
-- [x] Debug logging implementation for auto-review trigger
+- [ ] No active work in progress
 
 ## Blockers
-- None identified
+- None
 
 ## Next Steps
-1. Verify debug messages appear in expected scenarios
-2. Consider adding more detailed debug information if needed
+1. Verify the documentation matches the current implementation
+2. Ensure all related documentation updates are complete

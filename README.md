@@ -69,8 +69,8 @@ SessionState
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
 4. If all done → 500ms debounce timer starts
-5. Timer fires → silently sets `reviewFired = true`, clears timer
-6. Nothing appears in chat or terminal — completely invisible
+5. Timer fires → outputs `[auto-review] REVIEW TRIGGERED` to terminal
+6. No message sent to chat — the notification is terminal-only
 
 ### Why not text parsing?
 
