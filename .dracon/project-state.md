@@ -1,22 +1,21 @@
 # Project State
 
 ## Current Focus
-Simplified debug logging in the auto-review plugin by replacing file-based logging with stderr output
+Simplified debug logging output in the auto-review plugin
 
 ## Context
-This change addresses the ongoing effort to improve debug logging in the auto-review plugin. Previous commits had focused on enhancing and documenting debug logging, but this commit simplifies the implementation by using stderr instead of file-based logging.
+The plugin previously output verbose debug messages to stderr, which were useful during development but cluttered the terminal. This change reduces the noise while maintaining essential startup and review-triggered confirmation messages.
 
 ## Completed
-- [x] Replaced file-based logging with stderr output for all debug messages
-- [x] Simplified the trace function implementation
-- [x] Maintained consistent logging format across all plugin operations
+- [x] Reduced debug logging to only two key messages: plugin load and review trigger
+- [x] Clarified that messages appear only in terminal (not OpenCode UI)
 
 ## In Progress
-- [x] Debug logging simplification
+- [x] Documentation update to reflect simplified logging
 
 ## Blockers
-- No blockers identified
+- None identified
 
 ## Next Steps
-1. Verify stderr logging works as expected in production
-2. Update documentation to reflect the new logging approach
+1. Verify the simplified logging meets user needs
+2. Consider adding a verbose mode for advanced debugging if needed
