@@ -1,27 +1,26 @@
 # Project State
 
 ## Current Focus
-Simplified the auto-review plugin by removing complex TODO detection and bulk phrase matching logic
+Refactored the auto-review plugin to use OpenCode's internal todo events instead of text parsing
 
 ## Context
-The plugin previously had sophisticated TODO detection patterns and fuzzy matching capabilities, but these were removed to simplify the implementation while maintaining core functionality.
+The old version tried to regex-parse user messages for patterns like `- [ ]`, `TODO:`, `all done`. This was fragile, missed todos created via the internal todowrite tool, and required fuzzy matching and source tracking. The new approach hooks directly into OpenCode's todo event system — the same system the AI and UI use.
 
 ## Completed
-- [x] Removed all TODO detection patterns (markdown, TODO:, DONE:, etc.)
-- [x] Eliminated bulk phrase matching logic
-- [x] Simplified session state management
-- [x] Reduced debug logging to stderr only
-- [x] Removed Levenshtein distance calculations
-- [x] Simplified configuration merging
+- [x] Removed all text parsing logic for todo detection
+- [x] Added event listener for `todo.updated` events
+- [x] Implemented review trigger when all todos are completed/cancelled
+- [x] Added cancellation logic when new pending todos appear
+- [x] Simplified session state tracking to just review status and debounce timer
+- [x] Updated documentation to reflect the new event-based approach
 
 ## In Progress
-- [ ] No active development work in progress
+- [ ] Testing the plugin with various todo creation scenarios
 
 ## Blockers
-- None identified
+- Need to verify the plugin loads correctly and events are properly received
 
 ## Next Steps
-1. Verify core functionality remains intact
-2. Update documentation to reflect simplified behavior
-3. Consider adding more basic TODO detection if needed
-```
+1. Test the plugin with different todo creation methods (AI, UI, manual text)
+2. Verify the debounce behavior works as expected
+3. Confirm the review prompt is injected at the correct time
