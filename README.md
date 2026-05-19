@@ -1,4 +1,4 @@
-# opencode-auto-review-completed-todos
+# opencode-todo-review
 
 > **Topic:** OpenCode Plugins · **Tags:** todo, review, productivity, automation
 
@@ -8,7 +8,7 @@ Auto-detect when all session todos are completed and send a review message. Fire
 
 ## About
 
-`opencode-auto-review-completed-todos` is an OpenCode plugin that automatically triggers a session review when all tasks are completed. It listens for OpenCode's internal `todo.updated` events — the same system used by the AI and UI — and sends a visible chat message prompting the AI to summarize the session.
+`opencode-todo-review` is an OpenCode plugin that automatically triggers a session review when all tasks are completed. It listens for OpenCode's internal `todo.updated` events — the same system used by the AI and UI — and sends a visible chat message prompting the AI to summarize the session.
 
 Designed as the yin to [`opencode-todo-reminder`](https://www.npmjs.com/package/opencode-todo-reminder)'s yang: where todo-reminder nudges when tasks remain incomplete, this plugin triggers a review when all tasks are done.
 
@@ -23,16 +23,16 @@ This works with **any** todo source: the AI creating/checking todos via the todo
 ## Install
 
 ```bash
-cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
+cp opencode-todo-review.ts ~/.config/opencode/plugins/
 # or the compiled version:
-cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
+cp opencode-todo-review.js ~/.config/opencode/plugins/
 ```
 
 Register in `opencode.json`:
 
 ```json
 "plugin": [
-  "opencode-auto-review-completed-todos"
+  "opencode-todo-review"
 ]
 ```
 
@@ -43,7 +43,7 @@ Restart OpenCode.
 ```json
 {
   "plugin": [
-    ["opencode-auto-review-completed-todos", {
+    ["opencode-todo-review", {
       "debounceMs": 500
     }]
   ]
@@ -91,7 +91,7 @@ Uses `client.session.prompt()` with `synthetic: false` — the same approach as 
 | Plugin | When it triggers | What it does |
 |--------|-----------------|--------------|
 | `opencode-todo-reminder` | Todos remain incomplete | Nudges to complete tasks |
-| `opencode-auto-review-completed-todos` | All todos complete | Triggers review |
+| `opencode-todo-review` | All todos complete | Triggers review |
 
 ## Status
 
@@ -108,15 +108,15 @@ Plugin:
 
 | Path | Description |
 |------|-------------|
-| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
-| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.ts` | TypeScript source |
-| `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source |
+| `~/.config/opencode/plugins/opencode-todo-review.js` | Main plugin (loaded by OpenCode) |
+| `~/.config/opencode/plugins/opencode-todo-review.ts` | TypeScript source |
+| `~/Dev/opencode-todo-review/` | Git-tracked source |
 
 ## Troubleshooting
 
 **Plugin not loading:**
-- Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
-- Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
+- Verify `opencode.json` has `"opencode-todo-review"` in the `plugin` array
+- Ensure file is at `~/.config/opencode/plugins/opencode-todo-review.js`
 
 **Message not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
