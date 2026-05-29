@@ -23,16 +23,16 @@ This works with **any** todo source: the AI creating/checking todos via the todo
 ## Install
 
 ```bash
-cp opencode-todo-review.ts ~/.config/opencode/plugins/
+cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
 # or the compiled version:
-cp opencode-todo-review.js ~/.config/opencode/plugins/
+cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
 Register in `opencode.json`:
 
 ```json
 "plugin": [
-  "opencode-todo-review"
+  "opencode-auto-review-completed-todos"
 ]
 ```
 
@@ -43,7 +43,7 @@ Restart OpenCode.
 ```json
 {
   "plugin": [
-    ["opencode-todo-review", {
+    ["opencode-auto-review-completed-todos", {
       "debounceMs": 500
     }]
   ]
@@ -108,15 +108,15 @@ Plugin:
 
 | Path | Description |
 |------|-------------|
-| `~/.config/opencode/plugins/opencode-todo-review.js` | Main plugin (loaded by OpenCode) |
-| `~/.config/opencode/plugins/opencode-todo-review.ts` | TypeScript source |
-| `~/Dev/opencode-todo-review/` | Git-tracked source |
+| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
+| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.ts` | TypeScript source |
+| `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source |
 
 ## Troubleshooting
 
 **Plugin not loading:**
-- Verify `opencode.json` has `"opencode-todo-review"` in the `plugin` array
-- Ensure file is at `~/.config/opencode/plugins/opencode-todo-review.js`
+- Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
+- Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
 
 **Message not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
