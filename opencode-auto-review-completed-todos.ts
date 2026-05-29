@@ -152,7 +152,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
         const todos = (e as unknown as EventTodoUpdated).properties.todos;
         if (!Array.isArray(todos)) return;
 
-        const state = ensureSession(sessionId);
+        ensureSession(sessionId);
 
         if (allTodosCompleted(todos)) {
           scheduleReview(sessionId);

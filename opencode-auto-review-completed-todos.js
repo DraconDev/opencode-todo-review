@@ -20,9 +20,6 @@ function allTodosCompleted(todos) {
 var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
   const config = mergeOptions(rawOptions);
   const sessions = new Map;
-  function getSession(sessionId) {
-    return sessions.get(sessionId) ?? null;
-  }
   function evictOldestSessions(count) {
     const entries = Array.from(sessions.entries()).sort((a, b) => a[1].createdAt - b[1].createdAt);
     for (let i = 0;i < count && i < entries.length; i++) {
@@ -108,7 +105,7 @@ var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
         const todos = e.properties.todos;
         if (!Array.isArray(todos))
           return;
-        const state = ensureSession(sessionId);
+        ensureSession(sessionId);
         if (allTodosCompleted(todos)) {
           scheduleReview(sessionId);
         } else {
@@ -125,5 +122,5 @@ export {
   AutoReviewCompletedTodosPlugin
 };
 
-//# debugId=3E0BDF0BE99D4A2464756E2164756E21
+//# debugId=C678470268715DBB64756E2164756E21
 //# sourceMappingURL=opencode-auto-review-completed-todos.js.map
