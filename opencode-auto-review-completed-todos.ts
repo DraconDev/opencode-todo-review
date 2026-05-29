@@ -6,24 +6,34 @@ import type { EventTodoUpdated, Todo } from "@opencode-ai/sdk";
 interface SessionState {
   reviewFired: boolean;
   debounceTimer: ReturnType<typeof setTimeout> | null;
+  createdAt: number;
 }
 
 interface Options {
   debounceMs: number;
+  maxSessions?: number;
 }
 
 const DEFAULT_OPTIONS: Options = {
   debounceMs: 500,
+  maxSessions: 100,
 };
+
+const MAX_SESSIONS_CAP = 1000;
 
 function mergeOptions(raw: unknown): Options {
   if (!raw || typeof raw !== "object") return { ...DEFAULT_OPTIONS };
   const o = raw as Record<string, unknown>;
+  const maxSessions =
+    typeof o.maxSessions === "number" && o.maxSessions > 0
+      ? Math.min(o.maxSessions, MAX_SESSIONS_CAP)
+      : DEFAULT_OPTIONS.maxSessions ?? 100;
   return {
     debounceMs:
       typeof o.debounceMs === "number" && o.debounceMs > 0
         ? o.debounceMs
         : DEFAULT_OPTIONS.debounceMs,
+    maxSessions,
   };
 }
 
@@ -45,10 +55,22 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
     return sessions.get(sessionId) ?? null;
   }
 
+  function evictOldestSessions(count: number): void {
+    const entries = Array.from(sessions.entries()).sort(
+      (a, b) => a[1].createdAt - b[1].createdAt,
+    );
+    for (let i = 0; i < count && i < entries.length; i++) {
+      cleanupSession(entries[i][0]);
+    }
+  }
+
   function ensureSession(sessionId: string): SessionState {
     let state = sessions.get(sessionId);
     if (!state) {
-      state = { reviewFired: false, debounceTimer: null };
+      if (sessions.size >= (config.maxSessions ?? 100)) {
+        evictOldestSessions(Math.ceil((config.maxSessions ?? 100) * 0.2));
+      }
+      state = { reviewFired: false, debounceTimer: null, createdAt: Date.now() };
       sessions.set(sessionId, state);
     }
     return state;

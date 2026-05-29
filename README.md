@@ -44,7 +44,8 @@ Restart OpenCode.
 {
   "plugin": [
     ["opencode-auto-review-completed-todos", {
-      "debounceMs": 500
+      "debounceMs": 500,
+      "maxSessions": 100
     }]
   ]
 }
@@ -53,6 +54,7 @@ Restart OpenCode.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `debounceMs` | `number` | `500` | Wait after the last completed todo before sending message |
+| `maxSessions` | `number` | `100` | Maximum concurrent sessions to track (oldest 20% evicted when limit is reached) |
 
 ## How it works
 
