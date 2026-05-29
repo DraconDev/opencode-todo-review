@@ -118,9 +118,11 @@ var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
 };
 var opencode_auto_review_completed_todos_default = AutoReviewCompletedTodosPlugin;
 export {
+  mergeOptions,
   opencode_auto_review_completed_todos_default as default,
+  allTodosCompleted,
   AutoReviewCompletedTodosPlugin
 };
 
-//# debugId=C678470268715DBB64756E2164756E21
+//# debugId=E12D51D8F337903A64756E2164756E21
 //# sourceMappingURL=opencode-auto-review-completed-todos.js.map

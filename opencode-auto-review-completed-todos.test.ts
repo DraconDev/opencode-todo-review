@@ -1,8 +1,7 @@
 import { describe, expect, it } from "bun:test";
+import { allTodosCompleted, mergeOptions } from "./opencode-auto-review-completed-todos.js";
 
 describe("allTodosCompleted", () => {
-  const { allTodosCompleted } = await import("./opencode-auto-review-completed-todos.ts");
-
   it("returns false for empty array", () => {
     expect(allTodosCompleted([])).toBe(false);
   });
@@ -41,8 +40,6 @@ describe("allTodosCompleted", () => {
 });
 
 describe("mergeOptions", () => {
-  const { mergeOptions } = await import("./opencode-auto-review-completed-todos.ts");
-
   it("returns defaults for null/undefined", () => {
     const result = mergeOptions(null);
     expect(result.debounceMs).toBe(500);

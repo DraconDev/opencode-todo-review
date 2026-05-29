@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS: Options = {
 
 const MAX_SESSIONS_CAP = 1000;
 
-function mergeOptions(raw: unknown): Options {
+export function mergeOptions(raw: unknown): Options {
   if (!raw || typeof raw !== "object") return { ...DEFAULT_OPTIONS };
   const o = raw as Record<string, unknown>;
   const maxSessions =
@@ -37,7 +37,7 @@ function mergeOptions(raw: unknown): Options {
   };
 }
 
-function allTodosCompleted(todos: Todo[]): boolean {
+export function allTodosCompleted(todos: Todo[]): boolean {
   return (
     Array.isArray(todos) &&
     todos.length > 0 &&
