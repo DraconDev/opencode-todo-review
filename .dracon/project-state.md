@@ -1,10 +1,10 @@
 # Project State
 
 ## Current Focus
-Initial package configuration for the auto-review plugin that triggers when all session TODOs are completed.
+Post-launch cleanup and project hygiene.
 
 ## Context
-This creates the package metadata for a plugin that automatically initiates a review when all TODOs in a session are marked as complete. It complements the existing `opencode-todo-reminder` plugin by providing the opposite functionality.
+The auto-review plugin that triggers when all session TODOs are completed is shipped and functional. The plugin complements the existing `opencode-todo-reminder` plugin by providing the opposite functionality.
 
 ## Completed
 - [x] Created package.json with project metadata
@@ -12,13 +12,22 @@ This creates the package metadata for a plugin that automatically initiates a re
 - [x] Specified Node.js engine requirement (>=20)
 - [x] Included repository and keyword information
 - [x] Configured module type and entry points
+- [x] Implemented the auto-review detection logic
+- [x] Fixed README install instructions (wrong filenames)
+- [x] Created missing CLA.md and COMMERCIAL-LICENSE.md
+- [x] Added tsconfig.json for TypeScript compilation
+- [x] Added build/typecheck/test scripts to package.json
+- [x] Added CI workflow to verify JS stays in sync with TS
+- [x] Added precommit hook to verify build
 
 ## In Progress
-- [ ] Implementation of the auto-review logic
+- [ ] Add session TTL/max-size cap to prevent memory leak
+- [ ] Add GitHub issue and PR templates
 
 ## Blockers
-- Implementation of the core functionality needs to be developed
+None.
 
 ## Next Steps
-1. Implement the auto-review detection logic
-2. Add unit tests for the review triggering mechanism
+1. Address memory leak risk in sessions Map
+2. Add smoke/integration test
+3. Consider renaming package to match repo name

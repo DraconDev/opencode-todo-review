@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+      - name: TypeScript type check
+        run: bun run typecheck
+      - name: Build
+        run: bun run build
+      - name: Verify JS is up to date
+        run: git diff --exit-code opencode-auto-review-completed-todos.js
