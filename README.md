@@ -65,7 +65,8 @@ Per-session state is minimal:
 ```
 SessionState
 ├── reviewFired: boolean         ← prevent double-fire
-└── debounceTimer: Timer | null  ← debounce before sending
+├── debounceTimer: Timer | null  ← debounce before sending
+└── createdAt: number            ← used for LRU eviction when maxSessions reached
 ```
 
 ### Event handling
@@ -97,7 +98,7 @@ Uses `client.session.prompt()` with `synthetic: false` — the same approach as 
 
 ## Status
 
-**BETA — confirmed working (5 May 2026).**
+**STABLE** — Ready for production use.
 
 Plugin:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
@@ -105,6 +106,9 @@ Plugin:
 - AI responds with a session review summary
 - Debounces to avoid premature triggering
 - Fires only once per session
+- Configurable `maxSessions` cap prevents memory leak
+- Retry with exponential backoff on prompt failure
+- Structured logging for observability
 
 ## Files
 
