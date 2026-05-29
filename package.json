@@ -1,5 +1,5 @@
 {
-  "name": "opencode-todo-review",
+  "name": "opencode-auto-review-completed-todos",
   "version": "1.0.4",
   "description": "Auto-detect when all session todos are completed and trigger a review. Yin to opencode-todo-reminder's yang.",
   "website": "https://dracon.uk",
