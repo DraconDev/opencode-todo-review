@@ -45,7 +45,8 @@ Restart OpenCode.
   "plugin": [
     ["opencode-auto-review-completed-todos", {
       "debounceMs": 500,
-      "maxSessions": 100
+      "maxSessions": 100,
+      "maxRetries": 2
     }]
   ]
 }
@@ -55,6 +56,7 @@ Restart OpenCode.
 |--------|------|---------|-------------|
 | `debounceMs` | `number` | `500` | Wait after the last completed todo before sending message |
 | `maxSessions` | `number` | `100` | Maximum concurrent sessions to track (oldest 20% evicted when limit is reached) |
+| `maxRetries` | `number` | `2` | Retry prompt delivery this many times on failure (with backoff) |
 
 ## How it works
 
@@ -81,8 +83,8 @@ SessionState
 1. User/AI completes todos via OpenCode's todowrite tool
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
-4. If all done → 500ms debounce timer starts
-5. Timer fires → sends message to chat: "All tasks in this session have been completed. Please perform a final review..."
+4. If all done → debounce timer starts (default 500ms, configurable via `debounceMs`)
+5. Timer fires → sends message to chat: "All tasks in this session have been completed. Please perform a final review..." (with retry on failure)
 6. AI responds with a session review summary
 
 ### How the message appears
