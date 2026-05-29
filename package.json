@@ -6,6 +6,12 @@
   "type": "module",
   "main": "opencode-auto-review-completed-todos.js",
   "types": "opencode-auto-review-completed-todos.ts",
+  "scripts": {
+    "build": "bun build opencode-auto-review-completed-todos.ts --target=browser --outdir=. --format=esm --sourcemap",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "precommit": "bun run typecheck && bun run build"
+  },
   "files": [
     "opencode-auto-review-completed-todos.js",
     "opencode-auto-review-completed-todos.ts",
