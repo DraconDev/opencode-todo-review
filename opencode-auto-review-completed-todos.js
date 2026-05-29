@@ -75,7 +75,7 @@ var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
             parts: [
               {
                 type: "text",
-                text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
+                text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time. If you identify any issues, bugs, or improvements during the review, use the todowrite tool to create todos for them immediately — do not simply note them in the review response.",
                 synthetic: false
               }
             ]
@@ -142,5 +142,5 @@ export {
   AutoReviewCompletedTodosPlugin
 };
 
-//# debugId=E76CDC4847A98F6064756E2164756E21
+//# debugId=36A02AD60769D00B64756E2164756E21
 //# sourceMappingURL=opencode-auto-review-completed-todos.js.map

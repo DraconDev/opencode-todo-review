@@ -84,7 +84,7 @@ SessionState
 2. `todo.updated` event fires with updated todo list
 3. Plugin checks `todos.every(t => t.status === "completed" || t.status === "cancelled")`
 4. If all done → debounce timer starts (default 500ms, configurable via `debounceMs`)
-5. Timer fires → sends message to chat: "All tasks in this session have been completed. Please perform a final review..." (with retry on failure)
+5. Timer fires → sends message to chat: "All tasks in this session have been completed. Please perform a final review..." (with retry on failure). The AI is explicitly instructed to create todos for any issues found, not just note them.
 6. AI responds with a session review summary
 
 ### How the message appears
