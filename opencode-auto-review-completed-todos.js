@@ -1,17 +1,25 @@
 // opencode-auto-review-completed-todos.ts
 var DEFAULT_OPTIONS = {
   debounceMs: 500,
-  maxSessions: 100
+  maxSessions: 100,
+  maxRetries: 2
 };
 var MAX_SESSIONS_CAP = 1000;
+function log(level, message) {
+  const timestamp = new Date().toISOString();
+  process.stderr.write(`[auto-review] [${timestamp}] [${level}] ${message}
+`);
+}
 function mergeOptions(raw) {
   if (!raw || typeof raw !== "object")
     return { ...DEFAULT_OPTIONS };
   const o = raw;
   const maxSessions = typeof o.maxSessions === "number" && o.maxSessions > 0 ? Math.min(o.maxSessions, MAX_SESSIONS_CAP) : DEFAULT_OPTIONS.maxSessions ?? 100;
+  const maxRetries = typeof o.maxRetries === "number" && o.maxRetries >= 0 ? Math.min(o.maxRetries, 5) : DEFAULT_OPTIONS.maxRetries ?? 2;
   return {
     debounceMs: typeof o.debounceMs === "number" && o.debounceMs > 0 ? o.debounceMs : DEFAULT_OPTIONS.debounceMs,
-    maxSessions
+    maxSessions,
+    maxRetries
   };
 }
 function allTodosCompleted(todos) {
@@ -53,24 +61,31 @@ var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
       clearTimeout(state.debounceTimer);
       state.debounceTimer = null;
     }
-    try {
-      await input.client.session.prompt({
-        path: { id: sessionId },
-        query: { directory: input.directory },
-        body: {
-          parts: [
-            {
-              type: "text",
-              text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
-              synthetic: false
-            }
-          ]
+    let lastError;
+    for (let attempt = 0;attempt <= (config.maxRetries ?? 2); attempt++) {
+      try {
+        await input.client.session.prompt({
+          path: { id: sessionId },
+          query: { directory: input.directory },
+          body: {
+            parts: [
+              {
+                type: "text",
+                text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time.",
+                synthetic: false
+              }
+            ]
+          }
+        });
+        return;
+      } catch (err) {
+        lastError = err;
+        if (attempt < (config.maxRetries ?? 2)) {
+          await new Promise((resolve) => setTimeout(resolve, 100 * (attempt + 1)));
         }
-      });
-    } catch {
-      process.stderr.write(`[auto-review] REVIEW TRIGGERED (prompt failed)
-`);
+      }
     }
+    log("error", `Review trigger failed after ${(config.maxRetries ?? 2) + 1} attempts: ${lastError instanceof Error ? lastError.message : String(lastError)}`);
   }
   function scheduleReview(sessionId) {
     const state = sessions.get(sessionId);
@@ -124,5 +139,5 @@ export {
   AutoReviewCompletedTodosPlugin
 };
 
-//# debugId=E12D51D8F337903A64756E2164756E21
+//# debugId=5C02FCBE7CA81F9264756E2164756E21
 //# sourceMappingURL=opencode-auto-review-completed-todos.js.map

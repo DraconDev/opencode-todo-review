@@ -71,4 +71,19 @@ describe("mergeOptions", () => {
     const result = mergeOptions({ maxSessions: 5000 });
     expect(result.maxSessions).toBe(1000);
   });
+
+  it("accepts valid maxRetries", () => {
+    const result = mergeOptions({ maxRetries: 3 });
+    expect(result.maxRetries).toBe(3);
+  });
+
+  it("caps maxRetries at 5", () => {
+    const result = mergeOptions({ maxRetries: 10 });
+    expect(result.maxRetries).toBe(5);
+  });
+
+  it("defaults maxRetries to 2", () => {
+    const result = mergeOptions(null);
+    expect(result.maxRetries).toBe(2);
+  });
 });
