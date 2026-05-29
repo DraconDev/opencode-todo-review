@@ -1,7 +1,7 @@
 // @bun
 // opencode-auto-review-completed-todos.ts
 import type { Plugin } from "@opencode-ai/plugin";
-import type { EventTodoUpdated, Todo } from "@opencode-ai/sdk";
+import type { Todo } from "@opencode-ai/sdk";
 
 interface SessionState {
   reviewFired: boolean;
@@ -56,6 +56,15 @@ export function allTodosCompleted(todos: Todo[]): boolean {
     todos.every(
       (t: Todo) => t.status === "completed" || t.status === "cancelled",
     )
+  );
+}
+
+function extractSessionId(event: Record<string, unknown>): string | undefined {
+  const props = event.properties as Record<string, unknown> | undefined;
+  return (
+    (props?.sessionID as string) ??
+    ((props?.info as Record<string, unknown>)?.id as string) ??
+    ((props?.path as Record<string, unknown>)?.id as string)
   );
 }
 
@@ -151,11 +160,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
   return {
     event: async ({ event }) => {
       const e = event as Record<string, unknown>;
-      const props = e?.properties as Record<string, unknown> | undefined;
-      const sessionId: string | undefined =
-        (props?.sessionID as string) ??
-        ((props?.info as Record<string, unknown>)?.id as string) ??
-        ((props?.path as Record<string, unknown>)?.id as string);
+      const sessionId = extractSessionId(e);
 
       if (!sessionId) return;
 
@@ -169,7 +174,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
       }
 
       if (e.type === "todo.updated") {
-        const todos = (e as unknown as EventTodoUpdated).properties.todos;
+        const todos = (e.properties as { todos?: Todo[] }).todos;
         if (!Array.isArray(todos)) return;
 
         ensureSession(sessionId);

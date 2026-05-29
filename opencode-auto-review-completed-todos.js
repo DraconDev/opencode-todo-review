@@ -25,6 +25,10 @@ function mergeOptions(raw) {
 function allTodosCompleted(todos) {
   return Array.isArray(todos) && todos.length > 0 && todos.every((t) => t.status === "completed" || t.status === "cancelled");
 }
+function extractSessionId(event) {
+  const props = event.properties;
+  return props?.sessionID ?? props?.info?.id ?? props?.path?.id;
+}
 var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
   const config = mergeOptions(rawOptions);
   const sessions = new Map;
@@ -108,8 +112,7 @@ var AutoReviewCompletedTodosPlugin = async (input, rawOptions) => {
   return {
     event: async ({ event }) => {
       const e = event;
-      const props = e?.properties;
-      const sessionId = props?.sessionID ?? props?.info?.id ?? props?.path?.id;
+      const sessionId = extractSessionId(e);
       if (!sessionId)
         return;
       if (e.type === "session.deleted" || e.type === "session.error" || e.type === "session.compacted") {
@@ -139,5 +142,5 @@ export {
   AutoReviewCompletedTodosPlugin
 };
 
-//# debugId=5C02FCBE7CA81F9264756E2164756E21
+//# debugId=E76CDC4847A98F6064756E2164756E21
 //# sourceMappingURL=opencode-auto-review-completed-todos.js.map
