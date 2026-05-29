@@ -1,6 +1,6 @@
 // @bun
 // opencode-auto-review-completed-todos.ts
-import { type Plugin, type PluginOptions } from "@opencode-ai/plugin";
+import type { Plugin } from "@opencode-ai/plugin";
 import type { EventTodoUpdated, Todo } from "@opencode-ai/sdk";
 
 interface SessionState {
@@ -50,10 +50,6 @@ function allTodosCompleted(todos: Todo[]): boolean {
 const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
   const config = mergeOptions(rawOptions);
   const sessions = new Map<string, SessionState>();
-
-  function getSession(sessionId: string): SessionState | null {
-    return sessions.get(sessionId) ?? null;
-  }
 
   function evictOldestSessions(count: number): void {
     const entries = Array.from(sessions.entries()).sort(
