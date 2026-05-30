@@ -22,9 +22,16 @@ This works with **any** todo source: the AI creating/checking todos via the todo
 
 ## Install
 
+### Option 1 — npm (recommended)
+
 ```bash
-cp opencode-auto-review-completed-todos.ts ~/.config/opencode/plugins/
-# or the compiled version:
+npm install -g opencode-auto-review-completed-todos
+cp $(npm root -g)/opencode-auto-review-completed-todos/opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
+```
+
+### Option 2 — manual
+
+```bash
 cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
@@ -100,31 +107,34 @@ Uses `client.session.prompt()` with `synthetic: false` — the same approach as 
 
 ## Status
 
-**STABLE** — Ready for production use.
+**STABLE** — Published to [npm](https://www.npmjs.com/package/opencode-auto-review-completed-todos) (v1.0.5). Ready for production use.
 
 Plugin:
 - Detects `todo.updated` events from OpenCode's internal todowrite tool
 - Sends visible chat message when all todos are completed
 - AI responds with a session review summary
+- Explicitly instructs AI to create todos for any issues found (not just note them)
 - Debounces to avoid premature triggering
 - Fires only once per session
 - Configurable `maxSessions` cap prevents memory leak
 - Retry with exponential backoff on prompt failure
 - Structured logging for observability
+- Cleans up on `session.deleted`, `session.error`, `session.compacted`
 
 ## Files
 
 | Path | Description |
 |------|-------------|
 | `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
-| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.ts` | TypeScript source |
+| `~/.npm-global/lib/node_modules/opencode-auto-review-completed-todos/` | npm package (global install) |
 | `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source |
 
 ## Troubleshooting
 
 **Plugin not loading:**
 - Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
-- Ensure file is at `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js`
+- Ensure `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` exists
+- Only the `.js` file should be in the plugins directory — do not copy the `.ts` file (it will cause the plugin to load twice)
 
 **Message not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
