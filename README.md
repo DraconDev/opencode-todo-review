@@ -26,8 +26,17 @@ This works with **any** todo source: the AI creating/checking todos via the todo
 
 ```bash
 npm install -g opencode-auto-review-completed-todos
-cp $(npm root -g)/opencode-auto-review-completed-todos/opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
+
+Register in `opencode.json`:
+
+```json
+"plugin": [
+  "opencode-auto-review-completed-todos@latest"
+]
+```
+
+OpenCode will automatically fetch and cache the latest version from npm. No manual file copying needed.
 
 ### Option 2 — manual
 
@@ -35,7 +44,7 @@ cp $(npm root -g)/opencode-auto-review-completed-todos/opencode-auto-review-comp
 cp opencode-auto-review-completed-todos.js ~/.config/opencode/plugins/
 ```
 
-Register in `opencode.json`:
+Register in `opencode.json` (version will be pinned to whatever you copied):
 
 ```json
 "plugin": [
@@ -125,16 +134,22 @@ Plugin:
 
 | Path | Description |
 |------|-------------|
-| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Main plugin (loaded by OpenCode) |
+| `~/.cache/opencode/packages/` | OpenCode's npm package cache (used when referencing `@latest`) |
+| `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` | Plugin file (manual install only) |
 | `~/.npm-global/lib/node_modules/opencode-auto-review-completed-todos/` | npm package (global install) |
 | `~/Dev/opencode-auto-review-completed-todos/` | Git-tracked source |
 
 ## Troubleshooting
 
+**Plugin firing twice (duplicate review prompts):**
+- This happens if the plugin is registered **both** as a local file in `~/.config/opencode/plugins/` **and** as an npm package reference. OpenCode loads both, causing double-fire.
+- If using `@latest` in `opencode.json`, do **not** also copy the `.js` file to `~/.config/opencode/plugins/`.
+- To fix: remove the local file from `~/.config/opencode/plugins/` and clear OpenCode's cache at `~/.cache/opencode/packages/`, then restart.
+
 **Plugin not loading:**
-- Verify `opencode.json` has `"opencode-auto-review-completed-todos"` in the `plugin` array
-- Ensure `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` exists
-- Only the `.js` file should be in the plugins directory — do not copy the `.ts` file (it will cause the plugin to load twice)
+- Verify `opencode.json` has `"opencode-auto-review-completed-todos"` (or `"opencode-auto-review-completed-todos@latest"`) in the `plugin` array
+- Ensure `~/.config/opencode/plugins/opencode-auto-review-completed-todos.js` exists (manual install only)
+- Only the `.js` file should be in the plugins directory — do not copy the `.ts` file
 
 **Message not appearing:**
 - Todos must be created via OpenCode's todowrite tool (not raw text like `- [ ]`)
