@@ -121,7 +121,7 @@ const AutoReviewCompletedTodosPlugin: Plugin = async (input, rawOptions) => {
             parts: [
               {
                 type: "text" as const,
-                text: "All tasks in this session have been completed. Please perform a final review: summarize what was accomplished, note any technical decisions or trade-offs made, flag anything that should be documented, and list any follow-up tasks or improvements for next time. If you identify any issues, bugs, or improvements during the review, use the todowrite tool to create todos for them immediately — do not simply note them in the review response.",
+                text: "AUDIT REQUIRED. Review what was done for obvious problems: unhandled edge cases, badly named variables, incomplete implementations, commented-out code, missing error handling, duplicated logic. For each problem found, use todowrite to create a todo before moving on. Only if you find nothing worth fixing should you summarize what was accomplished and note follow-up tasks worth doing.",
                 synthetic: false,
               },
             ],
